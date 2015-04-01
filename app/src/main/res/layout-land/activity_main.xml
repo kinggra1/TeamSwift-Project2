@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/game_title"
+            android:id="@+id/gameTitle"
+            android:layout_gravity="center"
+            android:textSize="30sp"
+            android:gravity="center" />
+
+        <ImageView
+            android:layout_width="174dp"
+            android:layout_height="fill_parent"
+            android:id="@+id/birdImage"
+            android:layout_gravity="center"
+            android:contentDescription="@string/parrot_accessibility"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/parrot"
+            android:layout_marginBottom="10dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/player_1_name"
+            android:id="@+id/player1Text"
+            android:textSize="18sp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/player1Name"
+            android:layout_marginBottom="5dp"
+            android:inputType="textCapWords" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/player_2_name"
+            android:id="@+id/player2Text"
+            android:textSize="18sp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/player2Name"
+            android:layout_marginBottom="5dp"
+            android:inputType="textCapWords" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_gravity="center">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/start_game"
+                android:id="@+id/startGame"
+                android:layout_gravity="center_horizontal"
+                android:onClick="onStartGame"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:textSize="14sp"
+                android:layout_marginBottom="5dp" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/view_instructions"
+                android:id="@+id/viewInstructions"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:textSize="14sp"
+                android:onClick="onViewInstructions" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

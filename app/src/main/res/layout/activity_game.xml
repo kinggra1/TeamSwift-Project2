@@ -1,0 +1,42 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="edu.msu.kinggra1.teamswift_project2.GameActivity"
+    android:orientation="vertical"
+    android:weightSum="1.1"
+    android:focusableInTouchMode="false">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/placementText"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/bird_placement_info"
+        android:layout_weight=".1"
+        android:gravity="center_horizontal|bottom"
+        android:padding="5dp" />
+
+    <view
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        class="edu.msu.kinggra1.teamswift_project2.GameView"
+        android:id="@+id/gameView"
+        android:focusableInTouchMode="false"
+        android:layout_weight=".8" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".2">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/place_bird"
+            android:id="@+id/placeBird"
+            android:onClick="onPlaceBird"
+            android:layout_gravity="center_horizontal|top" />
+    </FrameLayout>
+
+</LinearLayout>

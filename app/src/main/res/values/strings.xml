@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">TeamGoldfinch-Project1</string>
+    <string name="start_game">Start Game</string>
+    <string name="title_activity_game">GameActivity</string>
+    <string name="title_activity_selection">SelectionActivity</string>
+    <string name="player_1_name">Player 1 Name:</string>
+    <string name="player_2_name">Player 2 Name:</string>
+    <string name="game_title">The Flocking Game</string>
+    <string name="confirm_selection">Confirm Selection</string>
+    <string name="bird_placement_info">Place your bird %s</string>
+    <string name="parrot_accessibility">Parrot</string>
+    <string name="title_activity_final_score">Final Score</string>
+    <string name="player_wins">%s Wins!</string>
+    <string name="birds_placed">%d total birds placed!</string>
+    <string name="new_game">New Game</string>
+    <string name="place_bird">Place Bird</string>
+    <string name="player_select">Select Your Bird!</string>
+    <string name="game_state">game_state</string>
+    <string name="seagull_accessibility">Seagull</string>
+    <string name="view_instructions">Instructions</string>
+    <string name="instructions_title">Instructions</string>
+    <string name="instructions_text">To play, both players enter their names and then click the Start Game button.\n\nThe game then begins a round. A round consists of each player consecutively selecting a bird they want to place. To select a bird, tap on the bird and it will be outlined. To confirm the selection press the Confirm Selection button and then pass the device to the other player.\n\nBoth players then consecutively try to place their birds without touching the other birds on the play area. To place a bird, drag on the screen to position the bird and then press the Place Bird button to finalize the position.\n\nA new round then begins, but the order the players go in reverses. The game continues until one of the players overlap a bird with their placement. The player to overlap another bird first loses the game.</string>
+
+</resources>

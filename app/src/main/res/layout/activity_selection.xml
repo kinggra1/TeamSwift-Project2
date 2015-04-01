@@ -1,0 +1,32 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="edu.msu.kinggra1.teamswift_project2.GameActivity"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/player_select"
+        android:id="@+id/playerNameLabel"
+        android:layout_gravity="center_horizontal"
+        android:textSize="28sp" />
+
+    <view
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        class="edu.msu.kinggra1.teamswift_project2.SelectionView"
+        android:id="@+id/selectionView"
+        android:focusableInTouchMode="false"
+        android:layout_weight=".9" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/confirm_selection"
+        android:id="@+id/placeBird"
+        android:layout_gravity="center_horizontal"
+        android:onClick="onConfirmSelection" />
+</LinearLayout>
