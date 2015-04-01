@@ -1,10 +1,8 @@
-# TeamGoldfinch-Project1
-CSE 476 Project 1
+# TeamSwift-Project2
+CSE 476 Project 2
 
 Responsibilities (tentative):
 
-Paul: 1. Game class and main activity
-
-Grant: 3. The game play activity and the game area custom view
-
-Ethan: 2. The bird selection activity and activity sequencing
+Brandon  1). The sequencing of the activities.
+Cody     2). Client-side communications.
+Grant    3). Server-side communications.
