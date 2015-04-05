@@ -29,5 +29,8 @@
     <string name="user_password">Password</string>
     <string name="new_user">New User</string>
     <string name="login">Login</string>
+    <string name="title_activity_new_user">NewUserActivity</string>
+    <string name="username">Username</string>
+    <string name="retype_password">Repeat Password</string>
 
 </resources>
