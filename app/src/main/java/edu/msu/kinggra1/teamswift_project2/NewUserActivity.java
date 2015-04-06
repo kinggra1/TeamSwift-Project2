@@ -2,11 +2,19 @@ package edu.msu.kinggra1.teamswift_project2;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 
 
 public class NewUserActivity extends ActionBarActivity {
+
+    Cloud cloud = new Cloud();
+    EditText username;
+    EditText passwordOne;
+    EditText passwordTwo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,5 +43,14 @@ public class NewUserActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void newUser(View view) {
+        username = (EditText) findViewById(R.id.usernameText);
+        passwordOne = (EditText) findViewById(R.id.passwordOneText);
+        passwordTwo = (EditText) findViewById(R.id.passwordTwoText);
+        String result = cloud.Register(username.getText().toString(), passwordOne.getText().toString(), passwordTwo.getText().toString());
+        Log.d("RESULT", result);
+
     }
 }
