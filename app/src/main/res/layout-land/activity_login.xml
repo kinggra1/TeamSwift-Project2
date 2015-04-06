@@ -4,9 +4,92 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="edu.msu.kinggra1.teamswift_project2.LoginActivity">
+    tools:context="edu.msu.kinggra1.teamswift_project2.LoginActivity"
+    android:background="#425660">
 
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/userText"
+        android:textColor="#ffffffff"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginTop="25dp"
+        android:editable="false"
+        android:inputType="text|textEmailAddress"
+        android:hint="@string/user_login"
+        android:textColorHint="#FFFFFF"
+        android:autoText="false" />
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/userPassword"
+        android:textColor="#ffffffff"
+        android:layout_below="@+id/userText"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginTop="25dp"
+        android:editable="false"
+        android:inputType="textPassword"
+        android:textColorHint="#FFFFFF"
+        android:password="true"
+        android:hint="@string/user_password" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/stay_logged"
+        android:id="@+id/stayLogged"
+        android:layout_below="@+id/loginButton"
+        android:layout_alignEnd="@id/loginButton"
+        android:checked="true"
+        android:layout_alignParentRight="false"
+        android:layout_marginTop="15dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/new_user"
+        android:id="@+id/newUserButton"
+        android:layout_centerHorizontal="true"
+        android:background="#29B6F6"
+        android:textColor="#fff"
+        android:onClick="newUser"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:layout_below="@+id/userPassword"
+        android:layout_alignLeft="@+id/userPassword"
+        android:layout_marginTop="25dp"
+        android:layout_toStartOf="@+id/spacer" />
+
+    <View
+        android:layout_height="wrap_content"
+        android:layout_width="1dip"
+        android:background="?attr/dividerVertical"
+
+        android:layout_centerHorizontal="true"
+        android:layout_alignTop="@+id/newUserButton"
+        android:layout_alignBottom="@+id/newUserButton"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:id="@+id/spacer" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/login"
+        android:id="@+id/loginButton"
+        android:layout_centerHorizontal="true"
+        android:background="#29B6F6"
+        android:textColor="#fff"
+        android:onClick="userLogin"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:layout_below="@+id/userPassword"
+        android:layout_alignRight="@+id/userPassword"
+        android:layout_marginTop="25dp"
+        android:layout_toEndOf="@id/spacer" />
 
 </RelativeLayout>
+

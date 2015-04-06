@@ -61,7 +61,7 @@
         android:layout_below="@+id/userPassword"
         android:layout_alignLeft="@+id/userPassword"
         android:layout_marginTop="25dp"
-        android:layout_toStartOf="@id/spacer" />
+        android:layout_toStartOf="@+id/spacer" />
 
     <View
         android:layout_height="wrap_content"
