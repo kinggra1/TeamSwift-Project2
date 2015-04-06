@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 
 public class LoginActivity extends ActionBarActivity {
@@ -50,18 +51,34 @@ public class LoginActivity extends ActionBarActivity {
         startActivity(intent);
     }
 
-    public void userLogin(View view) {
+    public void userLogin(final View view) {
         userText = (EditText) findViewById(R.id.userText);
         userPasssword = (EditText) findViewById(R.id.userPassword);
 
-        Thread thread = new Thread( new Runnable() {
+        new Thread( new Runnable() {
             @Override
             public void run() {
-                String result = cloud.LogIn(userText.getText().toString(), userPasssword.getText().toString());
-                Log.d("RESULT", result);
-            }
-        });
 
-        thread.start();
+                final String result = cloud.LogIn(userText.getText().toString(), userPasssword.getText().toString());
+
+                if(result != null)
+                {
+                    // We have failed to log in
+
+                    Log.d("RESULT", result);
+
+                    view.post(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            Toast.makeText(view.getContext(), result, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                // Otherwise, we have succeeded
+            }
+        }).start();
     }
 }

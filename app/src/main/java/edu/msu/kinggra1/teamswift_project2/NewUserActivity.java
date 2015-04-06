@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 
 public class NewUserActivity extends ActionBarActivity {
@@ -45,21 +46,35 @@ public class NewUserActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void newUser(View view) {
+    public void newUser(final View view) {
         username = (EditText) findViewById(R.id.usernameText);
         passwordOne = (EditText) findViewById(R.id.passwordOneText);
         passwordTwo = (EditText) findViewById(R.id.passwordTwoText);
 
-        Thread thread = new Thread( new Runnable() {
+        new Thread( new Runnable() {
             @Override
-            public void run() {
-                String result = cloud.Register(username.getText().toString(), passwordOne.getText().toString(), passwordTwo.getText().toString());
-                Log.d("RESULT", result);
+            public void run()
+            {
+                final String result = cloud.Register(username.getText().toString(), passwordOne.getText().toString(), passwordTwo.getText().toString());
+
+                if(result != null)
+                {
+                    // We have failed to register
+
+                    Log.d("RESULT", result);
+
+                    view.post(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            Toast.makeText(view.getContext(), result, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                // Otherwise, we have succeeded
             }
-        });
-
-        thread.start();
-
-
+        }).start();
     }
 }
