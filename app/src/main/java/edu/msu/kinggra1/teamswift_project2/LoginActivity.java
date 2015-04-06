@@ -53,7 +53,15 @@ public class LoginActivity extends ActionBarActivity {
     public void userLogin(View view) {
         userText = (EditText) findViewById(R.id.userText);
         userPasssword = (EditText) findViewById(R.id.userPassword);
-        String result = cloud.LogIn(userText.getText().toString(), userPasssword.getText().toString());
-        Log.d("RESULT", result);
+
+        Thread thread = new Thread( new Runnable() {
+            @Override
+            public void run() {
+                String result = cloud.LogIn(userText.getText().toString(), userPasssword.getText().toString());
+                Log.d("RESULT", result);
+            }
+        });
+
+        thread.start();
     }
 }

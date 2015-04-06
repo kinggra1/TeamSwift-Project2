@@ -49,8 +49,17 @@ public class NewUserActivity extends ActionBarActivity {
         username = (EditText) findViewById(R.id.usernameText);
         passwordOne = (EditText) findViewById(R.id.passwordOneText);
         passwordTwo = (EditText) findViewById(R.id.passwordTwoText);
-        String result = cloud.Register(username.getText().toString(), passwordOne.getText().toString(), passwordTwo.getText().toString());
-        Log.d("RESULT", result);
+
+        Thread thread = new Thread( new Runnable() {
+            @Override
+            public void run() {
+                String result = cloud.Register(username.getText().toString(), passwordOne.getText().toString(), passwordTwo.getText().toString());
+                Log.d("RESULT", result);
+            }
+        });
+
+        thread.start();
+
 
     }
 }
