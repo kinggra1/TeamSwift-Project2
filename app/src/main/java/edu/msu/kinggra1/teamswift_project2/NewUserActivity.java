@@ -1,5 +1,6 @@
 package edu.msu.kinggra1.teamswift_project2;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -71,10 +72,19 @@ public class NewUserActivity extends ActionBarActivity {
                             Toast.makeText(view.getContext(), result, Toast.LENGTH_SHORT).show();
                         }
                     });
+                } else {
+                    Intent intent = new Intent();
+                    intent.setClass(getApplicationContext(), LoginActivity.class);
+                    startActivity(intent);
                 }
 
-                // Otherwise, we have succeeded
+
             }
         }).start();
+    }
+
+    public void backLogin(View view) {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
     }
 }

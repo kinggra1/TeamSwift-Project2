@@ -47,8 +47,37 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/login"
+        android:id="@+id/backButton"
+        android:background="#29B6F6"
+        android:textColor="#fff"
+        android:onClick="backLogin"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:layout_below="@+id/passwordTwoText"
+        android:layout_marginTop="25dp"
+        android:layout_toStartOf="@id/spacer"
+        android:layout_alignParentLeft="false"
+        android:layout_alignLeft="@+id/passwordTwoText"
+        android:layout_toLeftOf="@+id/spacer" />
+
+    <View
+        android:layout_height="wrap_content"
+        android:layout_width="1dip"
+        android:background="?attr/dividerVertical"
+
+        android:layout_centerHorizontal="true"
+        android:layout_alignTop="@+id/backButton"
+        android:layout_alignBottom="@+id/newUserButton"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:id="@+id/spacer" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="@string/new_user"
-        android:id="@+id/button"
+        android:id="@+id/newUserButton"
         android:layout_centerHorizontal="true"
         android:background="#29B6F6"
         android:textColor="#fff"
@@ -57,5 +86,7 @@
         android:paddingRight="20dp"
         android:layout_below="@+id/passwordTwoText"
         android:layout_marginTop="25dp"
-        android:layout_toStartOf="@id/spacer" />
+        android:layout_toStartOf="@id/spacer"
+        android:layout_alignRight="@+id/passwordTwoText"
+        android:layout_toRightOf="@+id/spacer" />
 </RelativeLayout>

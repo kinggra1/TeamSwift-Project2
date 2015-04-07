@@ -75,9 +75,14 @@ public class LoginActivity extends ActionBarActivity {
                             Toast.makeText(view.getContext(), result, Toast.LENGTH_SHORT).show();
                         }
                     });
+                } else {
+                    Intent intent = new Intent();
+                    intent.setClass(getApplicationContext(), WaitingRoomActivity.class);
+                    startActivity(intent);
+                    // Otherwise, we have succeeded
                 }
 
-                // Otherwise, we have succeeded
+
             }
         }).start();
     }
