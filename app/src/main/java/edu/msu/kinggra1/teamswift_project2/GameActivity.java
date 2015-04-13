@@ -35,10 +35,12 @@ public class GameActivity extends ActionBarActivity {
                 gameView.getGame().getCurrentPlayerName()));
 
         gameView.reloadBirds();
+        gameView.startPullThread();
     }
 
     public void onPlaceBird(View view) {
         gameView.onPlaceBird();
+        gameView.startPushThread();
 
         Bundle bundle = new Bundle();
         gameView.getGame().saveInstanceState(bundle, this);

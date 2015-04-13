@@ -3,12 +3,16 @@ package edu.msu.kinggra1.teamswift_project2;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.util.Xml;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import org.xmlpull.v1.XmlPullParser;
+
+import java.io.InputStream;
 
 
 public class LoginActivity extends ActionBarActivity {
@@ -16,6 +20,10 @@ public class LoginActivity extends ActionBarActivity {
     Cloud cloud = new Cloud();
     EditText userText;
     EditText userPasssword;
+
+    private static final String UTF8 = "UTF-8";
+    private static final String COMM_EXCEPTION = "An exception occurred while communicating with the server";
+    private static final String PARSING_EXCEPTION = "An exception occurred while parsing the server's return";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,30 +67,48 @@ public class LoginActivity extends ActionBarActivity {
             @Override
             public void run() {
 
-                final String result = cloud.LogIn(userText.getText().toString(), userPasssword.getText().toString());
+                InputStream stream = cloud.LogIn(userText.getText().toString(), userPasssword.getText().toString());
 
-                if(result != null)
-                {
-                    // We have failed to log in
 
-                    Log.d("RESULT", result);
+                if (stream != null) {
+                    try {
+                        //Create an XML parser for the stream
+                        XmlPullParser xmlParser = Xml.newPullParser();
+                        xmlParser.setInput(stream, UTF8);
 
-                    view.post(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            Toast.makeText(view.getContext(), result, Toast.LENGTH_SHORT).show();
+                        xmlParser.nextTag();      // Advance to first tag
+                        xmlParser.require(XmlPullParser.START_TAG, null, "flock");
+
+                        String xmlStatus = xmlParser.getAttributeValue(null, "status");
+
+                        if (xmlStatus.equals("no")) {
+                            String xmlMsg = xmlParser.getAttributeValue(null, "msg");
+
+                            ToastMessage(xmlMsg);
                         }
-                    });
-                } else {
-                    Intent intent = new Intent();
-                    intent.setClass(getApplicationContext(), WaitingRoomActivity.class);
-                    startActivity(intent);
-                    // Otherwise, we have succeeded
+                        else if (xmlStatus.equals("yes")) {
+                            // Start the new activity
+                            Intent intent = new Intent();
+                            intent.setClass(getApplicationContext(), WaitingRoomActivity.class);
+                            startActivity(intent);
+                        }
+                    }
+                    catch (Exception ex) {
+                        ToastMessage(PARSING_EXCEPTION);
+                    }
                 }
+                else {
+                    ToastMessage(COMM_EXCEPTION);
+                }
+            }
 
-
+            private void ToastMessage(final String message) {
+                view.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(view.getContext(), message, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         }).start();
     }

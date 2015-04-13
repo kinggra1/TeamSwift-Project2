@@ -3,12 +3,16 @@ package edu.msu.kinggra1.teamswift_project2;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.util.Xml;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import org.xmlpull.v1.XmlPullParser;
+
+import java.io.InputStream;
 
 
 public class NewUserActivity extends ActionBarActivity {
@@ -17,6 +21,10 @@ public class NewUserActivity extends ActionBarActivity {
     EditText username;
     EditText passwordOne;
     EditText passwordTwo;
+
+    private static final String UTF8 = "UTF-8";
+    private static final String COMM_EXCEPTION = "An exception occurred while communicating with the server";
+    private static final String PARSING_EXCEPTION = "An exception occurred while parsing the server's return";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,29 +64,47 @@ public class NewUserActivity extends ActionBarActivity {
             @Override
             public void run()
             {
-                final String result = cloud.Register(username.getText().toString(), passwordOne.getText().toString(), passwordTwo.getText().toString());
+                InputStream stream = cloud.Register(username.getText().toString(), passwordOne.getText().toString(), passwordTwo.getText().toString());
 
-                if(result != null)
-                {
-                    // We have failed to register
+                if (stream != null) {
+                    try {
+                        //Create an XML parser for the stream
+                        XmlPullParser xmlParser = Xml.newPullParser();
+                        xmlParser.setInput(stream, UTF8);
 
-                    Log.d("RESULT", result);
+                        xmlParser.nextTag();      // Advance to first tag
+                        xmlParser.require(XmlPullParser.START_TAG, null, "flock");
 
-                    view.post(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            Toast.makeText(view.getContext(), result, Toast.LENGTH_SHORT).show();
+                        String xmlStatus = xmlParser.getAttributeValue(null, "status");
+
+                        if (xmlStatus.equals("no")) {
+                            String xmlMsg = xmlParser.getAttributeValue(null, "msg");
+
+                            ToastMessage(xmlMsg);
                         }
-                    });
-                } else {
-                    Intent intent = new Intent();
-                    intent.setClass(getApplicationContext(), LoginActivity.class);
-                    startActivity(intent);
+                        else if (xmlStatus.equals("yes")) {
+                            // Start the new activity
+                            Intent intent = new Intent();
+                            intent.setClass(getApplicationContext(), LoginActivity.class);
+                            startActivity(intent);
+                        }
+                    }
+                    catch (Exception ex) {
+                        ToastMessage(PARSING_EXCEPTION);
+                    }
                 }
+                else {
+                    ToastMessage(COMM_EXCEPTION);
+                }
+            }
 
-
+            private void ToastMessage(final String message) {
+                view.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(view.getContext(), message, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         }).start();
     }

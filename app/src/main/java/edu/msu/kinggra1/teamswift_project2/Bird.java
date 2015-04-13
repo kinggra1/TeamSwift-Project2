@@ -58,6 +58,45 @@ public class Bird implements Serializable {
      */
     private float y;
 
+    /**
+     * Getter
+     * @return Bird ID
+     */
+    public int getId() {
+        return id;
+    }
+
+    /**
+     * Getter
+     * @return relative x pos
+     */
+    public float getRelX() {
+        return relX;
+    }
+
+    /**
+     * Getter
+     * @return relative Y pos
+     */
+    public float getRelY() {
+        return relY;
+    }
+
+    /**
+     * Getter
+     * @return x pos
+     */
+    public float getX() {
+        return x;
+    }
+
+    /**
+     * Getter
+     * @return Y pos
+     */
+    public float getY() {
+        return y;
+    }
 
     public Bird(Context context, int id, float relX, float relY) {
         this.id = id;

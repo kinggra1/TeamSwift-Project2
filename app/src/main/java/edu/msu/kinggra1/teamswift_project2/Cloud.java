@@ -32,10 +32,9 @@ public class Cloud {
     private static final String PULL_URL = "http://webdev.cse.msu.edu/~kinggra1/cse476/Project2/pull.php";
 
     private static final String UTF8 = "UTF-8";
-    private static final String NOT_ENTERED = "Username or password not entered";
     private static final String EXCEPTION = "An exception occurred while communicating with the server";
 
-    public String Register(String username, String password, String confirmPassword)
+    public InputStream Register(String username, String password, String confirmPassword)
     {
         // Trim leading white spaces on user and pass
         username = username.trim();
@@ -45,7 +44,7 @@ public class Cloud {
         // If there is no username or password length, then we can't log in
         if(username.length() == 0 || password.length() == 0 || confirmPassword.length() == 0)
         {
-            return NOT_ENTERED;
+            return null;
         }
 
         ArrayList<Pair<String, String>> attrList = new ArrayList<>();
@@ -54,27 +53,20 @@ public class Cloud {
         attrList.add(new Pair<>("repass", confirmPassword));
         attrList.add(new Pair<>("magic", MAGIC));
 
-        String xmlReturn = SendAndReceiveXML("flock", attrList, REGISTER_URL);
-
-        if (xmlReturn != null)
-        {
-            return xmlReturn;
-        }
-
-        return null;
+        return SendXML("flock", attrList, REGISTER_URL);
     }
 
-    public String LogIn(String username, String password)
+    public InputStream LogIn(String username, String password)
     {
         return LogInOrOut(username, password, LOGIN_URL);
     }
 
-    public String LogOut(String username, String password)
+    public InputStream LogOut(String username, String password)
     {
         return LogInOrOut(username, password, LOGOUT_URL);
     }
 
-    public String LogInOrOut(String username, String password, String url)
+    public InputStream LogInOrOut(String username, String password, String url)
     {
         // Trim leading white spaces on user and pass
         username = username.trim();
@@ -83,7 +75,7 @@ public class Cloud {
         // If there is no username or password length, then we can't log in
         if(username.length() == 0 || password.length() == 0)
         {
-            return NOT_ENTERED;
+            return null;
         }
 
         ArrayList<Pair<String, String>> attrList = new ArrayList<>();
@@ -91,19 +83,25 @@ public class Cloud {
         attrList.add(new Pair<>("pass", password));
         attrList.add(new Pair<>("magic", MAGIC));
 
-        String xmlReturn = SendAndReceiveXML("flock", attrList, url);
-
-        if (xmlReturn != null)
-        {
-            return xmlReturn;
-        }
-
-        return null;
+        return SendXML("flock", attrList, url);
     }
 
-    public void PushBirdData(String username, String password, String xmlData)
+    public InputStream Pull(int id)
     {
+        ArrayList<Pair<String, String>> attrList = new ArrayList<>();
+        attrList.add(new Pair<>("magic", MAGIC));
+        attrList.add(new Pair<>("id", String.valueOf(id)));
 
+        return SendXML("flock", attrList, PULL_URL);
+    }
+
+    public InputStream Push(String xmlStr)
+    {
+        ArrayList<Pair<String, String>> attrList = new ArrayList<>();
+        attrList.add(new Pair<>("magic", MAGIC));
+        attrList.add(new Pair<>("birds", xmlStr));
+
+        return SendXML("flock", attrList, PUSH_URL);
     }
 
     /**
@@ -113,7 +111,7 @@ public class Cloud {
      * @param urlStr URL to use to send the data
      * @return If successful, null. If failed, returns the msg data
      */
-    public String SendAndReceiveXML(String tag, List<Pair<String, String>> attrList, String urlStr)
+    public InputStream SendXML(String tag, List<Pair<String, String>> attrList, String urlStr)
     {
         // Serializer used to create XML, stringwriter used to capture xml output
         XmlSerializer xmlSerializer = Xml.newSerializer();
@@ -140,7 +138,7 @@ public class Cloud {
         catch (IOException e)
         {
             // This won't occur when writing to a string
-            return EXCEPTION;
+            return null;
         }
 
         // Convert string writer to string
@@ -155,13 +153,13 @@ public class Cloud {
         }
         catch (UnsupportedEncodingException e)
         {
-            return EXCEPTION;
+            return null;
         }
 
         //Send the data to the server
         byte[] postData = postDataStr.getBytes();
 
-        InputStream inputStream = null;
+        InputStream inputStream;
 
         try
         {
@@ -182,60 +180,20 @@ public class Cloud {
 
             if (responseCode != HttpURLConnection.HTTP_OK)
             {
-                return EXCEPTION;
+                return null;
             }
 
             inputStream = conn.getInputStream();
-
-            //Create an XML parser for the result
-            try
-            {
-                XmlPullParser xmlParser = Xml.newPullParser();
-                xmlParser.setInput(inputStream, UTF8);
-
-                xmlParser.nextTag();      // Advance to first tag
-                xmlParser.require(XmlPullParser.START_TAG, null, "flock");
-
-                String xmlStatus = xmlParser.getAttributeValue(null, "status");
-
-                if(xmlStatus.equals("no"))
-                {
-                    return xmlParser.getAttributeValue(null, "msg");
-                }
-                // We are done
-            }
-            catch(XmlPullParserException ex)
-            {
-                return EXCEPTION;
-            }
-            catch(IOException ex)
-            {
-                return EXCEPTION;
-            }
         }
         catch (MalformedURLException e)
         {
-            return EXCEPTION;
+            return null;
         }
         catch (IOException ex)
         {
-            return EXCEPTION;
-        }
-        finally
-        {
-            if(inputStream != null)
-            {
-                try
-                {
-                    inputStream.close();
-                }
-                catch(IOException ex)
-                {
-                    // Fail silently
-                }
-            }
+            return null;
         }
 
-        return null;
+        return inputStream;
     }
 }

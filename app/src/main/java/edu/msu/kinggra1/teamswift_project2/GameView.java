@@ -67,11 +67,15 @@ public class GameView extends View {
         game.reloadBirds(getContext());
     }
 
+    public void startPullThread() { game.startPullThread(this); }
+
+    public void startPushThread() { game.startPushThread(this); }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-       game.draw(canvas);
+//       game.draw(canvas);
     }
 
     public void saveInstanceState(Bundle bundle, Context context) { game.saveInstanceState(bundle, context); }
