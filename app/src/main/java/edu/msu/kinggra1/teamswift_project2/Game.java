@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Xml;
 import android.view.MotionEvent;
 import android.view.View;
@@ -431,13 +432,13 @@ public class Game implements Serializable {
         return writer.toString();
     }
 
-    private void LoadXML(String xmlStr) {
+    private void LoadXML(String xmlStr, GameView view) {
         ArrayList<Bird> tempList = new ArrayList<>();
 
-        int x = 0;
-        int y = 0;
-        int relX = 0;
-        int relY = 0;
+        float x = 0;
+        float y = 0;
+        float relX = 0;
+        float relY = 0;
         int id = 0;
 
         try {
@@ -447,26 +448,30 @@ public class Game implements Serializable {
             // Advance to first tag
             xmlParser.nextTag();
 
+            // Get the context of the view for the Bird constructor
+            Context context = view.getContext();
+
             while (xmlParser.getEventType() != xmlParser.END_DOCUMENT) {
 
+                if (xmlParser.getEventType() == XmlPullParser.END_TAG)
+                    xmlParser.nextTag();
                 xmlParser.require(XmlPullParser.START_TAG, null, "bird");
 
-                x = Integer.parseInt(xmlParser.getAttributeValue(null, "x"));
-                y = Integer.parseInt(xmlParser.getAttributeValue(null, "y"));
-                relX = Integer.parseInt(xmlParser.getAttributeValue(null, "relX"));
-                relY = Integer.parseInt(xmlParser.getAttributeValue(null, "relY"));
+                x = Float.parseFloat(xmlParser.getAttributeValue(null, "x"));
+                y = Float.parseFloat(xmlParser.getAttributeValue(null, "y"));
+                relX = Float.parseFloat(xmlParser.getAttributeValue(null, "relX"));
+                relY = Float.parseFloat(xmlParser.getAttributeValue(null, "relY"));
                 id = Integer.parseInt(xmlParser.getAttributeValue(null, "id"));
 
-                // Create new bird
-
                 // Add to temp list
+                tempList.add(new Bird(context, id, relX, relY, x, y));
 
                 // Advance to next tag
                 xmlParser.nextTag();
             }
 
         } catch (Exception ex) {
-            // Fail silently, this should never happen
+            Log.e("EXCEPTION", "Exception Game.LoadXML");
         }
 
         synchronized (this) {
@@ -559,7 +564,7 @@ public class Game implements Serializable {
                                 return;
 
                             if (xmlStatus.equals("yes") && xmlMsg != null) {
-                                LoadXML(xmlMsg);
+                                LoadXML(xmlMsg, view);
                             }
                             else if (xmlStatus.equals("no") && xmlMsg != null) {
                                 ToastMessage(xmlMsg);
