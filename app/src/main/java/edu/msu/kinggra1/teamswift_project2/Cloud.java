@@ -3,8 +3,6 @@ package edu.msu.kinggra1.teamswift_project2;
 import android.util.Pair;
 import android.util.Xml;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.IOException;
@@ -30,9 +28,9 @@ public class Cloud {
     private static final String LOGOUT_URL = "http://webdev.cse.msu.edu/~kinggra1/cse476/Project2/logout.php";
     private static final String PUSH_URL = "http://webdev.cse.msu.edu/~kinggra1/cse476/Project2/push.php";
     private static final String PULL_URL = "http://webdev.cse.msu.edu/~kinggra1/cse476/Project2/pull.php";
+    private static final String WAIT_URL = "http://webdev.cse.msu.edu/~kinggra1/cse476/Project2/wait.php";
 
     private static final String UTF8 = "UTF-8";
-    private static final String EXCEPTION = "An exception occurred while communicating with the server";
 
     public InputStream Register(String username, String password, String confirmPassword)
     {
@@ -102,6 +100,14 @@ public class Cloud {
         attrList.add(new Pair<>("birds", xmlStr));
 
         return SendXML("flock", attrList, PUSH_URL);
+    }
+
+    public InputStream Wait() {
+
+        ArrayList<Pair<String, String>> attrList = new ArrayList<>();
+        attrList.add(new Pair<>("magic", MAGIC));
+
+        return SendXML("flock", attrList, WAIT_URL);
     }
 
     /**

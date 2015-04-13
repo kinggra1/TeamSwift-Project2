@@ -129,7 +129,7 @@ public class Game implements Serializable {
      * Whether the cloud thread is runnable currently.
      * Set to false when we want to kill the thread.
      */
-    private boolean cloudThreadRunable = true;
+    private boolean pullThreadRunnable = true;
 
     /**
      * Unique cloud identifier number to test for updates
@@ -390,7 +390,7 @@ public class Game implements Serializable {
     public void saveInstanceState(Bundle bundle, Context context) {
         bundle.putSerializable(context.getString(R.string.game_state), this);
         // Kill the cloud thread
-        cloudThreadRunable = false;
+        pullThreadRunnable = false;
     }
 
     private String CreateXML() {
@@ -435,11 +435,11 @@ public class Game implements Serializable {
     private void LoadXML(String xmlStr, GameView view) {
         ArrayList<Bird> tempList = new ArrayList<>();
 
-        float x = 0;
-        float y = 0;
-        float relX = 0;
-        float relY = 0;
-        int id = 0;
+        float x;
+        float y;
+        float relX;
+        float relY;
+        int id;
 
         try {
             XmlPullParser xmlParser = Xml.newPullParser();
@@ -455,6 +455,7 @@ public class Game implements Serializable {
 
                 if (xmlParser.getEventType() == XmlPullParser.END_TAG)
                     xmlParser.nextTag();
+
                 xmlParser.require(XmlPullParser.START_TAG, null, "bird");
 
                 x = Float.parseFloat(xmlParser.getAttributeValue(null, "x"));
@@ -469,7 +470,6 @@ public class Game implements Serializable {
                 // Advance to next tag
                 xmlParser.nextTag();
             }
-
         } catch (Exception ex) {
             Log.e("EXCEPTION", "Exception Game.LoadXML");
         }
@@ -539,13 +539,9 @@ public class Game implements Serializable {
 
                 InputStream stream;
 
-                while (cloudThreadRunable) {
+                while (pullThreadRunnable) {
                     // Pull data from the cloud, get the input stream
                     stream = cloud.Pull(cloudID);
-
-                    // Check if this thread should be running
-                    if (!cloudThreadRunable)
-                        return;
 
                     if (stream != null) {
                         try {
@@ -560,23 +556,37 @@ public class Game implements Serializable {
                             String xmlMsg = xmlParser.getAttributeValue(null, "msg");
 
                             // Check if this thread should be running
-                            if (!cloudThreadRunable)
+                            if (!pullThreadRunnable)
                                 return;
 
                             if (xmlStatus.equals("yes") && xmlMsg != null) {
+                                String newCloudID = xmlParser.getAttributeValue(null, "id");
+
+                                // Update id
+                                cloudID = Integer.parseInt(newCloudID);
+
                                 LoadXML(xmlMsg, view);
                             }
                             else if (xmlStatus.equals("no") && xmlMsg != null) {
                                 ToastMessage(xmlMsg);
                             }
-
-                            Thread.sleep(sleepTime);
                         }
                         catch (Exception ex) {
                             ToastMessage(PARSING_EXCEPTION);
                         }
                     }
                     else {
+                        ToastMessage(COMM_EXCEPTION);
+                    }
+
+                    // Check if this thread should be running
+                    if (!pullThreadRunnable)
+                        return;
+
+                    // Sleep each while loop
+                    try {
+                        Thread.sleep(sleepTime);
+                    } catch (Exception ex) {
                         ToastMessage(COMM_EXCEPTION);
                     }
                 }

@@ -34,5 +34,6 @@
     <string name="retype_password">Repeat Password</string>
     <string name="stay_logged">Stay Logged In</string>
     <string name="title_activity_waiting_room">WaitingRoomActivity</string>
+    <string name="waiting_for_player">Waiting for other player...</string>
 
 </resources>
