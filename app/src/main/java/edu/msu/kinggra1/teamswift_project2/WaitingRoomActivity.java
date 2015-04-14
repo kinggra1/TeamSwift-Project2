@@ -28,7 +28,6 @@ public class WaitingRoomActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_waiting_room);
-        startWaitThread(findViewById(R.id.waitingText));
     }
 
 
@@ -62,9 +61,25 @@ public class WaitingRoomActivity extends ActionBarActivity {
         waitThreadRunnable = false;
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
 
+        // Kill the thread
+        waitThreadRunnable = false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        startWaitThread(findViewById(R.id.waitingText));
+    }
 
     private void startWaitThread(final View view) {
+
+        waitThreadRunnable = true;
+
         new Thread(new Runnable() {
             @Override
             public void run() {

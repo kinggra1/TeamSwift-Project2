@@ -69,6 +69,8 @@ public class GameView extends View {
 
     public void startPullThread() { game.startPullThread(this); }
 
+    public void stopPullThread() { game.stopPullThread(); }
+
     public void startPushThread() { game.startPushThread(this); }
 
     @Override

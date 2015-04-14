@@ -35,6 +35,19 @@ public class GameActivity extends ActionBarActivity {
                 gameView.getGame().getCurrentPlayerName()));
 
         gameView.reloadBirds();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        gameView.stopPullThread();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
         gameView.startPullThread();
     }
 

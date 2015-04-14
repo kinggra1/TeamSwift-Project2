@@ -387,9 +387,12 @@ public class Game implements Serializable {
 
         return false;
     }
+
+
     public void saveInstanceState(Bundle bundle, Context context) {
         bundle.putSerializable(context.getString(R.string.game_state), this);
-        // Kill the cloud thread
+
+        // Kill the pull thread
         pullThreadRunnable = false;
     }
 
@@ -529,7 +532,13 @@ public class Game implements Serializable {
         }).start();
     }
 
+    public void stopPullThread() {
+        pullThreadRunnable = false;
+    }
+
     public void startPullThread(final GameView view) {
+
+        pullThreadRunnable = true;
 
         new Thread(new Runnable() {
             @Override
