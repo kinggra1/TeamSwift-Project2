@@ -80,17 +80,27 @@ public class LoginActivity extends ActionBarActivity {
                         xmlParser.require(XmlPullParser.START_TAG, null, "flock");
 
                         String xmlStatus = xmlParser.getAttributeValue(null, "status");
+                        String xmlMsg = xmlParser.getAttributeValue(null, "msg");
 
                         if (xmlStatus.equals("no")) {
-                            String xmlMsg = xmlParser.getAttributeValue(null, "msg");
-
                             ToastMessage(xmlMsg);
                         }
                         else if (xmlStatus.equals("yes")) {
-                            // Start the new activity
-                            Intent intent = new Intent();
-                            intent.setClass(getApplicationContext(), WaitingRoomActivity.class);
-                            startActivity(intent);
+                            // Login successful
+
+                            // XML message is not empty
+                            if (!xmlMsg.equals("")) {
+                                // Waiting for other player to make a move
+                                Intent intent = new Intent();
+                                intent.setClass(getApplicationContext(), RoundWaitActivity.class);
+                                startActivity(intent);
+                            }
+                            else {
+                                // You are the first player in the game, wait to find a game
+                                Intent intent = new Intent();
+                                intent.setClass(getApplicationContext(), WaitingRoomActivity.class);
+                                startActivity(intent);
+                            }
                         }
                     }
                     catch (Exception ex) {

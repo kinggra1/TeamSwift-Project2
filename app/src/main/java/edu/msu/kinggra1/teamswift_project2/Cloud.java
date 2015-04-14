@@ -28,7 +28,7 @@ public class Cloud {
     private static final String LOGOUT_URL = "http://webdev.cse.msu.edu/~kinggra1/cse476/Project2/logout.php";
     private static final String PUSH_URL = "http://webdev.cse.msu.edu/~kinggra1/cse476/Project2/push.php";
     private static final String PULL_URL = "http://webdev.cse.msu.edu/~kinggra1/cse476/Project2/pull.php";
-    private static final String WAIT_URL = "http://webdev.cse.msu.edu/~kinggra1/cse476/Project2/wait.php";
+    private static final String WAIT_URL = "http://webdev.cse.msu.edu/~kinggra1/cse476/Project2/findgame.php";
 
     private static final String UTF8 = "UTF-8";
 

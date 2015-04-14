@@ -13,11 +13,7 @@ import org.xmlpull.v1.XmlPullParser;
 
 import java.io.InputStream;
 
-/**
- * Activity for waiting for another player to log in
- */
-
-public class WaitingRoomActivity extends ActionBarActivity {
+public class RoundWaitActivity extends ActionBarActivity {
 
     private static final String UTF8 = "UTF-8";
     private static final String COMM_EXCEPTION = "An exception occurred while communicating with the server";
@@ -25,27 +21,40 @@ public class WaitingRoomActivity extends ActionBarActivity {
     private static final String THREAD_EXCEPTION = "An exception occurred during thread sleep";
 
     /**
-     * Amount of milliseconds for the wait thread to wait
+     * Amount of milliseconds for the pull thread to wait
      */
     private long sleepTime = 2000;
 
     /**
-     * Whether the wait thread is currently runnable
+     * Whether the pull thread is currently runnable
      * Set to false in order to kill the thread
      */
-    private boolean waitThreadRunnable = true;
+    private boolean pullThreadRunnable = true;
+
+    /**
+     * Game instance for this player
+     */
+    private Game game;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_waiting_room);
-    }
+    protected void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+        setContentView(R.layout.activity_round_wait);
 
+        if (bundle != null) {
+            // Device was rotated
+            game = (Game)bundle.getSerializable(getString(R.string.game_state));
+        }
+        else {
+            // We are starting from a previous activity
+            game = (Game)getIntent().getExtras().getSerializable(getString(R.string.game_state));
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_waiting_room, menu);
+        getMenuInflater().inflate(R.menu.menu_round_wait, menu);
         return true;
     }
 
@@ -68,38 +77,42 @@ public class WaitingRoomActivity extends ActionBarActivity {
     protected void onSaveInstanceState(Bundle bundle) {
         super.onSaveInstanceState(bundle);
 
-        // Stop the current wait thread
-        waitThreadRunnable = false;
+        bundle.putSerializable(getString(R.string.game_state), game);
+
+        // Kill the pull thread
+        pullThreadRunnable = false;
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        // Kill the thread
-        waitThreadRunnable = false;
+        // Kill the pull thread
+        pullThreadRunnable = false;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        startWaitThread(findViewById(R.id.waitingRoomText));
+        startPullThread(findViewById(R.id.roundWaitText));
     }
 
-    private void startWaitThread(final View view) {
+    public void startPullThread(final View view) {
 
-        waitThreadRunnable = true;
+        pullThreadRunnable = true;
 
         new Thread(new Runnable() {
             @Override
             public void run() {
+                // Get a new cloud instance
                 Cloud cloud = new Cloud();
 
                 InputStream stream;
 
-                while (waitThreadRunnable) {
-                    stream = cloud.Wait();
+                while (pullThreadRunnable) {
+                    // Pull data from the cloud, get the input stream
+                    stream = cloud.Pull(game.getCloudID());
 
                     if (stream != null) {
                         try {
@@ -111,25 +124,29 @@ public class WaitingRoomActivity extends ActionBarActivity {
                             xmlParser.require(XmlPullParser.START_TAG, null, "flock");
 
                             String xmlStatus = xmlParser.getAttributeValue(null, "status");
+                            String xmlMsg = xmlParser.getAttributeValue(null, "msg");
 
                             // Check if this thread should be running
-                            if (!waitThreadRunnable)
+                            if (!pullThreadRunnable)
                                 return;
 
-                            if (xmlStatus.equals("yes")) {
-                                waitThreadRunnable = false;
+                            if (xmlStatus.equals("yes") && xmlMsg != null) {
+                                String newCloudID = xmlParser.getAttributeValue(null, "id");
 
-                                // Start the selection activity
+                                // Update cloud ID
+                                game.setCloudID(Integer.parseInt(newCloudID));
+
+                                // Load the XML into the bird array
+                                game.LoadXML(xmlMsg, view);
+
+                                // Start the Selection Activity
                                 Intent intent = new Intent();
                                 intent.setClass(getApplicationContext(), SelectionActivity.class);
+                                intent.putExtra(getString(R.string.game_state), game);
                                 startActivity(intent);
-                            }
-                            else if (xmlStatus.equals("no")) {
-                                // Check to see if there is a message included with the no
-                                String xmlMsg = xmlParser.getAttributeValue(null, "msg");
 
-                                if (xmlMsg != null)
-                                    ToastMessage(xmlMsg);
+                            } else if (xmlStatus.equals("no") && xmlMsg != null) {
+                                ToastMessage(xmlMsg);
                             }
                         } catch (Exception ex) {
                             ToastMessage(PARSING_EXCEPTION);
@@ -138,9 +155,11 @@ public class WaitingRoomActivity extends ActionBarActivity {
                         ToastMessage(COMM_EXCEPTION);
                     }
 
-                    if (!waitThreadRunnable)
+                    // Check if this thread should be running
+                    if (!pullThreadRunnable)
                         return;
 
+                    // Sleep each while loop
                     try {
                         Thread.sleep(sleepTime);
                     } catch (Exception ex) {

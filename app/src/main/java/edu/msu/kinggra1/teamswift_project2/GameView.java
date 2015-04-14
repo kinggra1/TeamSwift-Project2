@@ -67,12 +67,6 @@ public class GameView extends View {
         game.reloadBirds(getContext());
     }
 
-    public void startPullThread() { game.startPullThread(this); }
-
-    public void stopPullThread() { game.stopPullThread(); }
-
-    public void startPushThread() { game.startPushThread(this); }
-
     @Override
     protected void onDraw(Canvas canvas) {
        super.onDraw(canvas);

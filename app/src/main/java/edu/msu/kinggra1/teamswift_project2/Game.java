@@ -121,17 +121,6 @@ public class Game implements Serializable {
     private GameState state = GameState.birdSelection;
 
     /**
-     * Amount of time for the cloud thread to sleep between checks
-     */
-    private long sleepTime = 1000;
-
-    /**
-     * Whether the cloud thread is runnable currently.
-     * Set to false when we want to kill the thread.
-     */
-    private boolean pullThreadRunnable = true;
-
-    /**
      * Unique cloud identifier number to test for updates
      */
     private int cloudID = 0;
@@ -150,6 +139,18 @@ public class Game implements Serializable {
         Bitmap scaleBird = BitmapFactory.decodeResource(context.getResources(), R.drawable.ostrich);
         scalingWidth = scaleBird.getWidth()*1.5f;
     }
+
+    /**
+     * Getter for cloud ID number
+     * @return current cloud ID number
+     */
+    public int getCloudID() { return cloudID; }
+
+    /**
+     * Setter for cloud ID number
+     * @param cloudID new cloud ID number
+     */
+    public void setCloudID(int cloudID) { this.cloudID = cloudID; }
 
     /**
      * Determines if the game is in the selection state
@@ -246,7 +247,7 @@ public class Game implements Serializable {
     /**
      * Confirms the player has chosen where their bird goes
      */
-    public synchronized void confirmBirdPlacement() {
+    public void confirmBirdPlacement() {
         // Check to see if the player's bird collides with any other bird
         for(int itr = 0; itr < birds.size(); itr++) {
             if(getCurrentPlayer().getSelectedBird().collisionTest(birds.get(itr))) {
@@ -320,10 +321,8 @@ public class Game implements Serializable {
                 marginX + gameSize + BORDER_WIDTH, marginY + gameSize + BORDER_WIDTH, outlinePaint);
 
 
-        synchronized (this) {
-            for (Bird bird : birds) {
-                bird.draw(canvas, marginX, marginY, gameSize);
-            }
+        for (Bird bird : birds) {
+            bird.draw(canvas, marginX, marginY, gameSize);
         }
 
         if(dragging != null) {
@@ -335,10 +334,8 @@ public class Game implements Serializable {
 
     public void reloadBirds(Context context) {
 
-        synchronized (this) {
-            for (Bird bird : birds) {
-                bird.reloadBitmap(context);
-            }
+        for (Bird bird : birds) {
+            bird.reloadBitmap(context);
         }
 
         player1.getSelectedBird().reloadBitmap(context);
@@ -384,58 +381,10 @@ public class Game implements Serializable {
                 }
                 break;
         }
-
         return false;
     }
 
-
-    public void saveInstanceState(Bundle bundle, Context context) {
-        bundle.putSerializable(context.getString(R.string.game_state), this);
-
-        // Kill the pull thread
-        pullThreadRunnable = false;
-    }
-
-    private String CreateXML() {
-
-        // Serializer used to create XML, stringwriter used to capture xml output
-        XmlSerializer xmlSerializer = Xml.newSerializer();
-        StringWriter writer = new StringWriter();
-
-        // Create an XML packet
-        try
-        {
-            xmlSerializer.setOutput(writer);
-
-            xmlSerializer.startDocument(UTF8, true);
-
-            synchronized (this) {
-                for (Bird bird : birds) {
-                    xmlSerializer.startTag(null, "bird");
-
-                    xmlSerializer.attribute(null, "id", String.valueOf(bird.getId()));
-                    xmlSerializer.attribute(null, "relX", String.valueOf(bird.getRelX()));
-                    xmlSerializer.attribute(null, "relY", String.valueOf(bird.getRelY()));
-                    xmlSerializer.attribute(null, "x", String.valueOf(bird.getX()));
-                    xmlSerializer.attribute(null, "y", String.valueOf(bird.getY()));
-
-                    xmlSerializer.endTag(null, "bird");
-                }
-            }
-
-            xmlSerializer.endDocument();
-        }
-        catch (IOException e)
-        {
-            // This won't occur when writing to a string
-            return null;
-        }
-
-        // Convert string writer to string
-        return writer.toString();
-    }
-
-    private void LoadXML(String xmlStr, GameView view) {
+    public void LoadXML(String xmlStr, View view) {
         ArrayList<Bird> tempList = new ArrayList<>();
 
         float x;
@@ -477,138 +426,48 @@ public class Game implements Serializable {
             Log.e("EXCEPTION", "Exception Game.LoadXML");
         }
 
-        synchronized (this) {
-            // Set bird list to temp list
-            birds = tempList;
+        // Set bird list to temp list
+        birds = tempList;
+    }
+
+    public String CreateXML() {
+
+        // Serializer used to create XML, string writer used to capture xml output
+        XmlSerializer xmlSerializer = Xml.newSerializer();
+        StringWriter writer = new StringWriter();
+
+        // Create an XML packet
+        try
+        {
+            xmlSerializer.setOutput(writer);
+
+            xmlSerializer.startDocument(UTF8, true);
+
+            for (Bird bird : birds) {
+                xmlSerializer.startTag(null, "bird");
+
+                xmlSerializer.attribute(null, "id", String.valueOf(bird.getId()));
+                xmlSerializer.attribute(null, "relX", String.valueOf(bird.getRelX()));
+                xmlSerializer.attribute(null, "relY", String.valueOf(bird.getRelY()));
+                xmlSerializer.attribute(null, "x", String.valueOf(bird.getX()));
+                xmlSerializer.attribute(null, "y", String.valueOf(bird.getY()));
+
+                xmlSerializer.endTag(null, "bird");
+            }
+
+            xmlSerializer.endDocument();
         }
+        catch (IOException e)
+        {
+            // This won't occur when writing to a string
+            return null;
+        }
+
+        // Convert string writer to string
+        return writer.toString();
     }
 
-    public void startPushThread(final GameView view) {
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                // Get a new cloud instance
-                Cloud cloud = new Cloud();
-
-                String xmlStr = CreateXML();
-
-                InputStream stream = cloud.Push(xmlStr);
-
-                if (stream != null) {
-                    try {
-                        //Create an XML parser for the stream
-                        XmlPullParser xmlParser = Xml.newPullParser();
-                        xmlParser.setInput(stream, UTF8);
-
-                        xmlParser.nextTag();      // Advance to first tag
-                        xmlParser.require(XmlPullParser.START_TAG, null, "flock");
-
-                        String xmlStatus = xmlParser.getAttributeValue(null, "status");
-
-                        if (xmlStatus.equals("no")) {
-                            String xmlMsg = xmlParser.getAttributeValue(null, "msg");
-
-                            ToastMessage(xmlMsg);
-                        }
-                    }
-                    catch (Exception ex) {
-                        ToastMessage(PARSING_EXCEPTION);
-                    }
-                }
-                else {
-                    ToastMessage(COMM_EXCEPTION);
-                }
-            }
-
-            private void ToastMessage(final String message) {
-                view.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(view.getContext(), message, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        }).start();
-    }
-
-    public void stopPullThread() {
-        pullThreadRunnable = false;
-    }
-
-    public void startPullThread(final GameView view) {
-
-        pullThreadRunnable = true;
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                // Get a new cloud instance
-                Cloud cloud = new Cloud();
-
-                InputStream stream;
-
-                while (pullThreadRunnable) {
-                    // Pull data from the cloud, get the input stream
-                    stream = cloud.Pull(cloudID);
-
-                    if (stream != null) {
-                        try {
-                            //Create an XML parser for the stream
-                            XmlPullParser xmlParser = Xml.newPullParser();
-                            xmlParser.setInput(stream, UTF8);
-
-                            xmlParser.nextTag();      // Advance to first tag
-                            xmlParser.require(XmlPullParser.START_TAG, null, "flock");
-
-                            String xmlStatus = xmlParser.getAttributeValue(null, "status");
-                            String xmlMsg = xmlParser.getAttributeValue(null, "msg");
-
-                            // Check if this thread should be running
-                            if (!pullThreadRunnable)
-                                return;
-
-                            if (xmlStatus.equals("yes") && xmlMsg != null) {
-                                String newCloudID = xmlParser.getAttributeValue(null, "id");
-
-                                // Update id
-                                cloudID = Integer.parseInt(newCloudID);
-
-                                LoadXML(xmlMsg, view);
-                            }
-                            else if (xmlStatus.equals("no") && xmlMsg != null) {
-                                ToastMessage(xmlMsg);
-                            }
-                        }
-                        catch (Exception ex) {
-                            ToastMessage(PARSING_EXCEPTION);
-                        }
-                    }
-                    else {
-                        ToastMessage(COMM_EXCEPTION);
-                    }
-
-                    // Check if this thread should be running
-                    if (!pullThreadRunnable)
-                        return;
-
-                    // Sleep each while loop
-                    try {
-                        Thread.sleep(sleepTime);
-                    } catch (Exception ex) {
-                        ToastMessage(COMM_EXCEPTION);
-                    }
-                }
-            }
-
-            private void ToastMessage(final String message) {
-                view.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(view.getContext(), message, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        }).start();
+    public void saveInstanceState(Bundle bundle, Context context) {
+        bundle.putSerializable(context.getString(R.string.game_state), this);
     }
 }

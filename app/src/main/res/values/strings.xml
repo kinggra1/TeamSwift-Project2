@@ -35,5 +35,7 @@
     <string name="stay_logged">Stay Logged In</string>
     <string name="title_activity_waiting_room">WaitingRoomActivity</string>
     <string name="waiting_for_player">Waiting for other player...</string>
+    <string name="title_activity_round_wait">RoundWaitActivity</string>
+    <string name="waiting_for_round">Waiting for next round...</string>
 
 </resources>
