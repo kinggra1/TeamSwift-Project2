@@ -1,12 +1,16 @@
 package edu.msu.kinggra1.teamswift_project2;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Xml;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -20,6 +24,8 @@ public class LoginActivity extends ActionBarActivity {
     Cloud cloud = new Cloud();
     EditText userText;
     EditText userPasssword;
+    SharedPreferences sharedPref;
+    CheckBox check;
 
     private static final String UTF8 = "UTF-8";
     private static final String COMM_EXCEPTION = "An exception occurred while communicating with the server";
@@ -29,6 +35,19 @@ public class LoginActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        View view = findViewById(R.id.loginButton);
+        check = (CheckBox)findViewById(R.id.stayLogged);
+        userText = (EditText) findViewById(R.id.userText);
+        userPasssword = (EditText) findViewById(R.id.userPassword);
+
+        sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        if(!sharedPref.getString("USERNAME", "null").equals("null")) {
+            Log.d("USERNAME",sharedPref.getString("USERNAME","null"));
+            Log.d("PASSWORD",sharedPref.getString("PASSWORD","null"));
+
+            userText.setText(sharedPref.getString("USERNAME","null"));
+            userPasssword.setText(sharedPref.getString("PASSWORD","null"));
+        }
     }
 
 
@@ -88,10 +107,22 @@ public class LoginActivity extends ActionBarActivity {
                         else if (xmlStatus.equals("yes")) {
                             // Login successful
 
+                            if(check.isChecked()) {
+                                SharedPreferences.Editor editor = sharedPref.edit();
+                                editor.putString("PASSWORD", userPasssword.getText().toString());
+                                editor.putString("USERNAME", userText.getText().toString());
+                                editor.commit();
+                            }
+
+
                             // XML message is not empty
                             if (!xmlMsg.equals("")) {
                                 // Waiting for other player to make a move
                                 Intent intent = new Intent();
+                                Game game = new Game(getApplicationContext());
+                                Bundle bundle = new Bundle();
+                                bundle.putSerializable(getString(R.string.game_state),game);
+                                intent.putExtras(bundle);
                                 intent.setClass(getApplicationContext(), RoundWaitActivity.class);
                                 startActivity(intent);
                             }

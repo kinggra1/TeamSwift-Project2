@@ -37,5 +37,6 @@
     <string name="waiting_for_player">Waiting for other player...</string>
     <string name="title_activity_round_wait">RoundWaitActivity</string>
     <string name="waiting_for_round">Waiting for next round...</string>
+    <string name="preference_file_key">shared</string>
 
 </resources>

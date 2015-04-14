@@ -8,6 +8,10 @@
 
     <TextView android:text="@string/waiting_for_player" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/waitingRoomText" />
+        android:id="@+id/waitingRoomText"
+        android:layout_centerInParent="true"
+        android:textColor="#ffffff"
+        android:textSize="35sp"
+        android:gravity="center_horizontal" />
 
 </RelativeLayout>

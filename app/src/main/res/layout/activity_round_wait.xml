@@ -8,6 +8,10 @@
 
     <TextView android:text="@string/waiting_for_round" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/roundWaitText" />
+        android:id="@+id/roundWaitText"
+        android:textSize="35sp"
+        android:textColor="#ffffff"
+        android:gravity="center_horizontal"
+        android:layout_centerInParent="true" />
 
 </RelativeLayout>

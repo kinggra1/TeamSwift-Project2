@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.CookieHandler;
+import java.net.CookieManager;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -29,6 +31,7 @@ public class Cloud {
     private static final String PUSH_URL = "http://webdev.cse.msu.edu/~kinggra1/cse476/Project2/push.php";
     private static final String PULL_URL = "http://webdev.cse.msu.edu/~kinggra1/cse476/Project2/pull.php";
     private static final String WAIT_URL = "http://webdev.cse.msu.edu/~kinggra1/cse476/Project2/findgame.php";
+
 
     private static final String UTF8 = "UTF-8";
 
@@ -119,6 +122,10 @@ public class Cloud {
      */
     public InputStream SendXML(String tag, List<Pair<String, String>> attrList, String urlStr)
     {
+
+        CookieManager cookieManager = new CookieManager();
+        CookieHandler.setDefault(cookieManager);
+
         // Serializer used to create XML, stringwriter used to capture xml output
         XmlSerializer xmlSerializer = Xml.newSerializer();
         StringWriter writer = new StringWriter();
