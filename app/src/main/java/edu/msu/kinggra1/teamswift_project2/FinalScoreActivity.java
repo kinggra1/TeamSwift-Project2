@@ -46,9 +46,7 @@ public class FinalScoreActivity extends ActionBarActivity {
     }
 
     public void onNewGame(View view) {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        logOut();
     }
 
     @Override
@@ -82,13 +80,13 @@ public class FinalScoreActivity extends ActionBarActivity {
     }
 
     public void logOut() {
-        Thread thread = new Thread(new Runnable() {
+
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 cloud.LogOut(sharedPref.getString("USERNAME","null"), sharedPref.getString("PASSWORD","null"));
             }
-        });
-        thread.start();
+        }).start();
 
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("PASSWORD", "null");
@@ -97,6 +95,7 @@ public class FinalScoreActivity extends ActionBarActivity {
 
         Intent intent = new Intent();
         intent.setClass(getApplicationContext(), LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 }

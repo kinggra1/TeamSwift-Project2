@@ -306,21 +306,25 @@ public class Game implements Serializable {
             // Get the context of the view for the Bird constructor
             Context context = view.getContext();
 
-            while (xmlParser.getEventType() != xmlParser.END_DOCUMENT) {
+            while (xmlParser.getEventType() != XmlPullParser.END_DOCUMENT) {
 
                 if (xmlParser.getEventType() == XmlPullParser.END_TAG)
                     xmlParser.nextTag();
 
-                xmlParser.require(XmlPullParser.START_TAG, null, "bird");
+                if (xmlParser.getName().equals("bird")) {
+                    x = Float.parseFloat(xmlParser.getAttributeValue(null, "x"));
+                    y = Float.parseFloat(xmlParser.getAttributeValue(null, "y"));
+                    relX = Float.parseFloat(xmlParser.getAttributeValue(null, "relX"));
+                    relY = Float.parseFloat(xmlParser.getAttributeValue(null, "relY"));
+                    id = Integer.parseInt(xmlParser.getAttributeValue(null, "id"));
 
-                x = Float.parseFloat(xmlParser.getAttributeValue(null, "x"));
-                y = Float.parseFloat(xmlParser.getAttributeValue(null, "y"));
-                relX = Float.parseFloat(xmlParser.getAttributeValue(null, "relX"));
-                relY = Float.parseFloat(xmlParser.getAttributeValue(null, "relY"));
-                id = Integer.parseInt(xmlParser.getAttributeValue(null, "id"));
-
-                // Add to temp list
-                tempList.add(new Bird(context, id, relX, relY, x, y));
+                    // Add to temp list
+                    tempList.add(new Bird(context, id, relX, relY, x, y));
+                }
+                else if (xmlParser.getName().equals("game")) {
+                    gameOver = xmlParser.getAttributeValue(null, "gameOver").equals("true");
+                    roundNum = Integer.parseInt(xmlParser.getAttributeValue(null, "round"));
+                }
 
                 // Advance to next tag
                 xmlParser.nextTag();
@@ -357,6 +361,13 @@ public class Game implements Serializable {
 
                 xmlSerializer.endTag(null, "bird");
             }
+
+            xmlSerializer.startTag(null, "game");
+
+            xmlSerializer.attribute(null, "round", String.valueOf(roundNum));
+            xmlSerializer.attribute(null, "gameOver", String.valueOf(gameOver));
+
+            xmlSerializer.endTag(null, "game");
 
             xmlSerializer.endDocument();
         }
