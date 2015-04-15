@@ -57,31 +57,11 @@ public class GameActivity extends ActionBarActivity {
     public void onPlaceBird(View view) {
         gameView.onPlaceBird();
 
-        Bundle bundle = new Bundle();
-        gameView.saveInstanceState(bundle, this);
-
-        startPushThread(view);
-
-        if (gameView.inGameOverState()) {
-
-            Intent intent = new Intent(this, FinalScoreActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtras(bundle);
-            startActivity(intent);
-            finish();
-        }
-        else if (gameView.inSelectionState()) {
-
-            Intent intent = new Intent(this, SelectionActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtras(bundle);
-            startActivity(intent);
-            finish();
-        }
-
         TextView tv = (TextView)findViewById(R.id.placementText);
         tv.setText(String.format(getString(R.string.bird_placement_info),
                 gameView.getGame().getCurrentPlayerName()));
+
+        startPushThread(view);
     }
 
     @Override
@@ -120,13 +100,25 @@ public class GameActivity extends ActionBarActivity {
                             ToastMessage(xmlMsg);
                         }
                         else if (xmlStatus.equals("yes")) {
-                            // NEED TO ADD GAME OVER TO THIS
+                            // Push successful
 
-                            // Push successful, start waiting for the next round
-                            Intent intent = new Intent();
-                            intent.setClass(getApplicationContext(), RoundWaitActivity.class);
-                            intent.putExtra(getString(R.string.game_state), gameView.getGame());
-                            startActivity(intent);
+                            if (gameView.inGameOverState()) {
+                                // Game over
+                                Intent intent = new Intent(getApplicationContext(), FinalScoreActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                intent.putExtra(getString(R.string.game_state), gameView.getGame());
+                                startActivity(intent);
+                                finish();
+                            }
+                            else if (gameView.inSelectionState()) {
+                                // Start waiting for the next round
+                                Intent intent = new Intent();
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                intent.setClass(getApplicationContext(), RoundWaitActivity.class);
+                                intent.putExtra(getString(R.string.game_state), gameView.getGame());
+                                startActivity(intent);
+                                finish();
+                            }
                         }
                     } catch (Exception ex) {
                         ToastMessage(PARSING_EXCEPTION);
