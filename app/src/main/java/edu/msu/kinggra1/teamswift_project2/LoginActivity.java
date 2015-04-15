@@ -54,7 +54,7 @@ public class LoginActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_login, menu);
+        getMenuInflater().inflate(R.menu.menu, menu);
         return true;
     }
 
@@ -67,10 +67,30 @@ public class LoginActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            Log.d("CLICKED", "CLICKED");
+            logOut();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void logOut() {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                cloud.LogOut(sharedPref.getString("USERNAME","null"), sharedPref.getString("PASSWORD","null"));
+            }
+        });
+        thread.start();
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("PASSWORD", "null");
+        editor.putString("USERNAME", "null");
+        editor.commit();
+
+        Intent intent = new Intent();
+        intent.setClass(getApplicationContext(), LoginActivity.class);
+        startActivity(intent);
     }
 
     public void newUser(View view) {
@@ -81,6 +101,19 @@ public class LoginActivity extends ActionBarActivity {
     public void userLogin(final View view) {
         userText = (EditText) findViewById(R.id.userText);
         userPasssword = (EditText) findViewById(R.id.userPassword);
+
+        if(sharedPref.getString("USERNAME","null").equals("null") && sharedPref.getString("PASSWORD","null").equals("null") ) {
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    cloud.LogOut(sharedPref.getString("USERNAME","null"), sharedPref.getString("PASSWORD","null"));
+                }
+            });
+            thread.start();
+        }
+
+
+        //ADD CODE TO P
 
         new Thread( new Runnable() {
             @Override
@@ -107,10 +140,18 @@ public class LoginActivity extends ActionBarActivity {
                         else if (xmlStatus.equals("yes")) {
                             // Login successful
 
+
+
                             if(check.isChecked()) {
                                 SharedPreferences.Editor editor = sharedPref.edit();
                                 editor.putString("PASSWORD", userPasssword.getText().toString());
                                 editor.putString("USERNAME", userText.getText().toString());
+                                editor.commit();
+                            }
+                            else {
+                                SharedPreferences.Editor editor = sharedPref.edit();
+                                editor.putString("PASSWORD", "null");
+                                editor.putString("USERNAME", "null");
                                 editor.commit();
                             }
 

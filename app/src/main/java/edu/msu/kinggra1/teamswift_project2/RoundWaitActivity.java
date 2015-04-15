@@ -1,8 +1,11 @@
 package edu.msu.kinggra1.teamswift_project2;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Xml;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,6 +17,8 @@ import org.xmlpull.v1.XmlPullParser;
 import java.io.InputStream;
 
 public class RoundWaitActivity extends ActionBarActivity {
+    Cloud cloud;
+    SharedPreferences sharedPref;
 
     private static final String UTF8 = "UTF-8";
     private static final String COMM_EXCEPTION = "An exception occurred while communicating with the server";
@@ -49,12 +54,15 @@ public class RoundWaitActivity extends ActionBarActivity {
             // We are starting from a previous activity
             game = (Game)getIntent().getExtras().getSerializable(getString(R.string.game_state));
         }
+        cloud = new Cloud();
+        sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_round_wait, menu);
+        getMenuInflater().inflate(R.menu.menu, menu);
         return true;
     }
 
@@ -67,10 +75,30 @@ public class RoundWaitActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            Log.d("CLICKED", "CLICKED");
+            logOut();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void logOut() {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                cloud.LogOut(sharedPref.getString("USERNAME","null"), sharedPref.getString("PASSWORD","null"));
+            }
+        });
+        thread.start();
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("PASSWORD", "null");
+        editor.putString("USERNAME", "null");
+        editor.commit();
+
+        Intent intent = new Intent();
+        intent.setClass(getApplicationContext(), LoginActivity.class);
+        startActivity(intent);
     }
 
     @Override
