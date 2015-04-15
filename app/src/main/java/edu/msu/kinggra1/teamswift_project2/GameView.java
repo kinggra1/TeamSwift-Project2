@@ -45,10 +45,6 @@ public class GameView extends View {
         this.game = game;
     }
 
-    public boolean inSelectionState() {
-        return game.inSelectionState();
-    }
-
     public boolean inGameOverState() {
         return game.inGameOverState();
     }

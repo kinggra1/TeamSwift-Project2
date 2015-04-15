@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 public class FinalScoreActivity extends ActionBarActivity {
     Game game;
-    Cloud cloud;
+    Cloud cloud = new Cloud();
     SharedPreferences sharedPref;
 
     @Override
@@ -29,10 +29,19 @@ public class FinalScoreActivity extends ActionBarActivity {
             game = (Game)getIntent().getExtras().getSerializable(getString(R.string.game_state));
         }
 
-        cloud = new Cloud();
         sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
-        ((TextView)findViewById(R.id.winningPlayerText)).setText(String.format(getString(R.string.player_wins), game.getWinningPlayerName()));
+        // Check here for winner
+        String winningPlayerText;
+
+        if (game.isWinner()) {
+            winningPlayerText = getString(R.string.you_won);
+        }
+        else {
+            winningPlayerText = getString(R.string.you_lost);
+        }
+
+        ((TextView)findViewById(R.id.winningPlayerText)).setText(winningPlayerText);
         ((TextView)findViewById(R.id.birdText)).setText(String.format(getString(R.string.birds_placed), game.getNumBirdsPlaced()));
     }
 

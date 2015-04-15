@@ -11,13 +11,11 @@ import android.util.Log;
 import android.util.Xml;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -26,18 +24,6 @@ import java.util.ArrayList;
 public class Game implements Serializable {
     private static final long serialVersionUID = 1L;
     private static final String UTF8 = "UTF-8";
-    private static final String COMM_EXCEPTION = "An exception occurred while communicating with the server";
-    private static final String PARSING_EXCEPTION = "An exception occurred while parsing the server's return";
-
-    /**
-     * Used to track what state the game is currently in
-     */
-    private enum GameState {
-        nameEntry,
-        birdSelection,
-        birdPlacement,
-        gameOver
-    }
 
     /**
      * Percentage of the view width/height that is occupied by the game
@@ -59,7 +45,6 @@ public class Game implements Serializable {
      */
     private transient int gameSize;
 
-
     /**
      * The 1:1 scaling width of the game
      */
@@ -76,29 +61,24 @@ public class Game implements Serializable {
     private ArrayList<Bird> birds = new ArrayList<>();
 
     /**
-     * The first player in the game
+     * The current player in the game
      */
-    private Player player1;
+    private Player player = new Player();
 
     /**
-     * The second player in the game
-     */
-    private Player player2;
-
-    /**
-     * The player that won the game
-     */
-    private Player winner;
-
-    /**
-     * The player turn: the first player to go for 0, or the second player to go for 1
-     */
-    private int playerTurn = 0;
-
-    /**
-     * The current round number (0 based)
+     * The current round number
      */
     private int roundNum = 0;
+
+    /**
+     * True if the game is finished
+     */
+    private boolean gameOver = false;
+
+    /**
+     * Unique cloud identifier number to test for updates
+     */
+    private int cloudID = 0;
 
     /**
      * Is there a bird currently being dragged
@@ -114,16 +94,6 @@ public class Game implements Serializable {
      * Most recent relative Y touch when dragging
      */
     private float lastRelY;
-
-    /**
-     * The current stage of the game
-     */
-    private GameState state = GameState.birdSelection;
-
-    /**
-     * Unique cloud identifier number to test for updates
-     */
-    private int cloudID = 0;
 
     /**
      * @param context the current context
@@ -153,85 +123,46 @@ public class Game implements Serializable {
     public void setCloudID(int cloudID) { this.cloudID = cloudID; }
 
     /**
-     * Determines if the game is in the selection state
-     * @return true if the game is in the selection state; false otherwise
-     */
-    public boolean inSelectionState() {
-        return state.equals(GameState.birdSelection);
-    }
-
-    /**
-     * Determines if the game is in the game over state
+     * Determines if the game is finished
      * @return true if the game is over; false otherwise
      */
-    public boolean inGameOverState() { return state.equals(GameState.gameOver); }
+    public boolean inGameOverState() { return gameOver; }
 
     /**
-     * Get the current player who's turn it is
-     * @return the player who's turn it is
+     * Determines if the round number is even
+     * @return true if the number is even
      */
-    private Player getCurrentPlayer() {
-        if(playerTurn == 0) {
-            if(roundNum % 2 == 0) return player1;
-            else return player2;
-        }
-        else {
-            if(roundNum % 2 == 1) return player1;
-            else return player2;
-        }
-    }
+    public boolean isEvenRound() { return roundNum % 2 == 0; }
 
     /**
-     * Get the player who's turn is next
-     * @return the player who's turn is next
+     * Determines if the player's number is even
+     * @return true if the number is even
      */
-    private Player getNextPlayer() {
-        if(getCurrentPlayer() == player1) return player2;
-        else return player1;
-    }
+    public boolean isEvenPlayer() { return player.isEvenPlayer(); }
 
     /**
-     * Advance the game by one turn
+     * Whether the local player is the winner or not
+     * @return true if this player is the winner
      */
-    private void advanceTurn() {
-        if(isSecondTurn()) {
-            playerTurn = 0;
-
-            if(state == GameState.birdSelection) {
-                state = GameState.birdPlacement;
-                dragging = getCurrentPlayer().getSelectedBird();
-            }
-            else {
-                state = GameState.birdSelection;
-                dragging = null;
-                roundNum++;
-            }
-        }
-        else {
-            playerTurn = 1;
-            dragging = getCurrentPlayer().getSelectedBird();
-        }
-    }
+    public boolean isWinner() { return player.isWinner(); }
 
     /**
-     * Get whether the second player in the current state has their turn now
-     * @return true if the second player in the current state is playing; false otherwise
+     * Setter for the winner variable of the player
+     * @param winner true if the player is the winner
      */
-    private boolean isSecondTurn() {
-        return playerTurn == 1;
-    }
+    public void setWinner(boolean winner) { player.setWinner(winner); }
 
     /**
-     * Set the names of the players playing the game
-     * @param name1 player 1's name
-     * @param name2 player 2's name
+     * Get the current player
+     * @return current player
      */
-    public void setPlayerNames(String name1, String name2) {
-        player1 = new Player(name1);
-        player2 = new Player(name2);
+    public Player getPlayer() { return player; }
 
-        state = GameState.birdSelection;
-    }
+    /**
+     * Increment the round number by one, returns the new round number
+     * @return
+     */
+    public int incrementRoundNum() { roundNum++; return roundNum; }
 
     /**
      * Set the current player's bird selection
@@ -239,56 +170,29 @@ public class Game implements Serializable {
      */
     public void setPlayerSelection(Bird selection) {
         Bird copyOfSelected = new Bird(selection);
-        getCurrentPlayer().setSelectedBird(copyOfSelected);
-
-        advanceTurn();
+        player.setSelectedBird(copyOfSelected);
     }
-
-    /**
-     * Confirms the player has chosen where their bird goes
-     */
-    public void confirmBirdPlacement() {
-        // Check to see if the player's bird collides with any other bird
-        for(int itr = 0; itr < birds.size(); itr++) {
-            if(getCurrentPlayer().getSelectedBird().collisionTest(birds.get(itr))) {
-                declareWinner(getNextPlayer());
-                return;
-            }
-        }
-
-        birds.add(getCurrentPlayer().getSelectedBird());
-
-        advanceTurn();
-    }
-
-    /**
-     * Set the passed player as the winner, and move the game into the final state
-     * @param winner the player who won
-     */
-    private void declareWinner(Player winner) {
-        this.winner = winner;
-        state = GameState.gameOver;
-    }
-
-    /**
-     * Gets the current player's name
-     * @return the player's name
-     */
-    public String getCurrentPlayerName() {
-        return getCurrentPlayer().getName();
-    }
-
-    /**
-     * Get the name of the player who won
-     * @return the name of the player who won
-     */
-    public String getWinningPlayerName() { return winner.getName(); }
 
     /**
      * Get the current number of birds placed
      * @return the current number of birds placed
      */
     public int getNumBirdsPlaced() { return birds.size(); }
+
+    /**
+     * Confirms the player has chosen where their bird goes
+     */
+    public void confirmBirdPlacement() {
+        // Check to see if the player's bird collides with any other bird
+        for(Bird bird : birds) {
+            if(player.getSelectedBird().collisionTest(bird)) {
+                gameOver = true;
+                return;
+            }
+        }
+
+        birds.add(player.getSelectedBird());
+    }
 
     /**
      * Draw the game
@@ -338,8 +242,7 @@ public class Game implements Serializable {
             bird.reloadBitmap(context);
         }
 
-        player1.getSelectedBird().reloadBitmap(context);
-        player2.getSelectedBird().reloadBitmap(context);
+        player.getSelectedBird().reloadBitmap(context);
 
         // Birds will be scaled so that the game is "1.5 ostriches" wide
         Bitmap scaleBird = BitmapFactory.decodeResource(context.getResources(), R.drawable.ostrich);

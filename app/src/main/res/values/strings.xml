@@ -13,6 +13,8 @@
     <string name="parrot_accessibility">Parrot</string>
     <string name="title_activity_final_score">Final Score</string>
     <string name="player_wins">%s Wins!</string>
+    <string name="you_won">You won!</string>
+    <string name="you_lost">You lost.</string>
     <string name="birds_placed">%d total birds placed!</string>
     <string name="new_game">New Game</string>
     <string name="place_bird">Place Bird</string>

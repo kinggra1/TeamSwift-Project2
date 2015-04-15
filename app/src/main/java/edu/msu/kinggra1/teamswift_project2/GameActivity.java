@@ -38,8 +38,7 @@ public class GameActivity extends ActionBarActivity {
         }
 
         TextView tv = (TextView)findViewById(R.id.placementText);
-        tv.setText(String.format(getString(R.string.bird_placement_info),
-                gameView.getGame().getCurrentPlayerName()));
+        tv.setText(getString(R.string.bird_placement_info));
 
         gameView.reloadBirds();
     }
@@ -57,11 +56,38 @@ public class GameActivity extends ActionBarActivity {
     public void onPlaceBird(View view) {
         gameView.onPlaceBird();
 
-        TextView tv = (TextView)findViewById(R.id.placementText);
-        tv.setText(String.format(getString(R.string.bird_placement_info),
-                gameView.getGame().getCurrentPlayerName()));
+        //TextView tv = (TextView)findViewById(R.id.placementText);
+        //tv.setText(getString(R.string.bird_placement_info));
 
-        startPushThread(view);
+        // If the bird placement caused the game to end
+        if (gameView.getGame().inGameOverState()) {
+            // This player is the loser
+            gameView.getGame().setWinner(false);
+
+            startPushThread(view);
+
+            // Push thread will finish the game after pushing
+        }
+        else {
+            boolean evenRound = gameView.getGame().isEvenRound();
+            boolean evenPlayer = gameView.getGame().isEvenPlayer();
+
+            // If they are the same
+            if (evenRound == evenPlayer) {
+                // Swap players, same round
+                startPushThread(view);
+            }
+            else {
+                // Don't swap players, new round
+                gameView.getGame().incrementRoundNum();
+
+                // Start the selection activity for the next round
+                Intent intent = new Intent();
+                intent.setClass(getApplicationContext(), SelectionActivity.class);
+                intent.putExtra(getString(R.string.game_state), gameView.getGame());
+                startActivity(intent);
+            }
+        }
     }
 
     @Override
@@ -103,14 +129,14 @@ public class GameActivity extends ActionBarActivity {
                             // Push successful
 
                             if (gameView.inGameOverState()) {
-                                // Game over
-                                Intent intent = new Intent(getApplicationContext(), FinalScoreActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                // Start the final score activity with this
+                                Intent intent = new Intent();
+                                intent.setClass(getApplicationContext(), FinalScoreActivity.class);
                                 intent.putExtra(getString(R.string.game_state), gameView.getGame());
                                 startActivity(intent);
                                 finish();
                             }
-                            else if (gameView.inSelectionState()) {
+                            else {
                                 // Start waiting for the next round
                                 Intent intent = new Intent();
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

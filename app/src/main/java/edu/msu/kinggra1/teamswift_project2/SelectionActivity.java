@@ -21,8 +21,6 @@ public class SelectionActivity extends ActionBarActivity {
 
     private Toast noBirdToast;
 
-    private Toast birdSelectedToast;
-
     @Override
     protected void onSaveInstanceState(Bundle bundle) {
         super.onSaveInstanceState(bundle);
@@ -66,7 +64,7 @@ public class SelectionActivity extends ActionBarActivity {
      * set the text at the top of the selection screen to the appropriate player
      */
     private void setPlayerSelectionText() {
-        selectionText.setText(game.getCurrentPlayerName() + " " + getString(R.string.player_select));
+        selectionText.setText(getString(R.string.player_select));
     }
 
     public void onConfirmSelection(View view) {
@@ -76,14 +74,10 @@ public class SelectionActivity extends ActionBarActivity {
         if (selectionView.isSelected()) {
             selectionView.setPlayerSelection(game);
 
-            if (!game.inSelectionState()){
-                Intent intent = new Intent(this, GameActivity.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
-                finish();
-            }
-            else
-                setPlayerSelectionText();
+            Intent intent = new Intent(this, GameActivity.class);
+            intent.putExtras(bundle);
+            startActivity(intent);
+            finish();
 
         } else {
             noBirdToast.show();

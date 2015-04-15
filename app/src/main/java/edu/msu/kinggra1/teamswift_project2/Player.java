@@ -5,20 +5,35 @@ import android.util.Log;
 import java.io.Serializable;
 
 public class Player implements Serializable {
+
     private static final long serialVersionUID = 2L;
 
     /**
-     * Get the player's name
-     * @return the player's name
+     * The number (1 or 2) of this player
      */
-    public String getName() {
-        return name;
-    }
+    private int playerNumber = 0;
 
     /**
-     * The player's name
+     * Whether this player is the winner (tested in final score activity)
      */
-    private String name;
+    private boolean winner = false;
+
+    /**
+     * The selected bird
+     */
+    private Bird selectedBird;
+
+    /**
+     * Setter for player number
+     * @param playerNumber new player number
+     */
+    public void setPlayerNumber(int playerNumber) { this.playerNumber = playerNumber; }
+
+    /**
+     * Getter for player number
+     * @return the current player number
+     */
+    public int getPlayerNumber() { return playerNumber; }
 
     /**
      * Get the selected bird
@@ -27,6 +42,18 @@ public class Player implements Serializable {
     public Bird getSelectedBird() {
         return selectedBird;
     }
+
+    /**
+     * Getter for the winner variable
+     * @return true if this player is the winner
+     */
+    public boolean isWinner() { return winner; }
+
+    /**
+     * Setter for winner variable
+     * @param winner whether the player is the winner or not
+     */
+    public void setWinner(boolean winner) { this.winner = winner; }
 
     /**
      * Set the selected bird
@@ -38,11 +65,8 @@ public class Player implements Serializable {
     }
 
     /**
-     * The selected bird
+     * Determines if the player's number is even
+     * @return true if the number is even
      */
-    private Bird selectedBird;
-
-    public Player(String name) {
-        this.name = name;
-    }
+    public boolean isEvenPlayer() { return playerNumber % 2 == 0; }
 }

@@ -17,13 +17,14 @@ import org.xmlpull.v1.XmlPullParser;
 import java.io.InputStream;
 
 public class RoundWaitActivity extends ActionBarActivity {
-    Cloud cloud;
-    SharedPreferences sharedPref;
-
     private static final String UTF8 = "UTF-8";
     private static final String COMM_EXCEPTION = "An exception occurred while communicating with the server";
     private static final String PARSING_EXCEPTION = "An exception occurred while parsing the server's return";
     private static final String THREAD_EXCEPTION = "An exception occurred during thread sleep";
+
+    Cloud cloud = new Cloud();
+
+    SharedPreferences sharedPref;
 
     /**
      * Amount of milliseconds for the pull thread to wait
@@ -54,9 +55,8 @@ public class RoundWaitActivity extends ActionBarActivity {
             // We are starting from a previous activity
             game = (Game)getIntent().getExtras().getSerializable(getString(R.string.game_state));
         }
-        cloud = new Cloud();
-        sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
+        sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
     }
 
     @Override
@@ -83,13 +83,12 @@ public class RoundWaitActivity extends ActionBarActivity {
     }
 
     public void logOut() {
-        Thread thread = new Thread(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 cloud.LogOut(sharedPref.getString("USERNAME","null"), sharedPref.getString("PASSWORD","null"));
             }
-        });
-        thread.start();
+        }).start();
 
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("PASSWORD", "null");
@@ -133,8 +132,6 @@ public class RoundWaitActivity extends ActionBarActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                // Get a new cloud instance
-                Cloud cloud = new Cloud();
 
                 InputStream stream;
 
@@ -166,6 +163,13 @@ public class RoundWaitActivity extends ActionBarActivity {
 
                                 // Load the XML into the bird array
                                 game.LoadXML(xmlMsg, view);
+
+                                // The other player lost the game
+                                if (game.inGameOverState()) {
+
+                                }
+
+                                pullThreadRunnable = false;
 
                                 // Start the Selection Activity
                                 Intent intent = new Intent();

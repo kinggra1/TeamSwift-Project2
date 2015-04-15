@@ -22,8 +22,6 @@ public class MainActivity extends ActionBarActivity {
         String name1 = ((EditText)findViewById(R.id.player1Name)).getText().toString();
         String name2 = ((EditText)findViewById(R.id.player2Name)).getText().toString();
 
-        game.setPlayerNames(name1, name2);
-
         Bundle bundle = new Bundle();
         game.saveInstanceState(bundle, this);
 

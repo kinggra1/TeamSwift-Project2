@@ -112,9 +112,6 @@ public class LoginActivity extends ActionBarActivity {
             thread.start();
         }
 
-
-        //ADD CODE TO P
-
         new Thread( new Runnable() {
             @Override
             public void run() {
@@ -140,8 +137,6 @@ public class LoginActivity extends ActionBarActivity {
                         else if (xmlStatus.equals("yes")) {
                             // Login successful
 
-
-
                             if(check.isChecked()) {
                                 SharedPreferences.Editor editor = sharedPref.edit();
                                 editor.putString("PASSWORD", userPasssword.getText().toString());
@@ -155,22 +150,28 @@ public class LoginActivity extends ActionBarActivity {
                                 editor.commit();
                             }
 
+                            Game game = new Game(getApplicationContext());
 
-                            // XML message is not empty
-                            if (!xmlMsg.equals("")) {
-                                // Waiting for other player to make a move
+                            // Increment the round number to 1 (starts at 0)
+                            game.incrementRoundNum();
+
+                            // XML message is empty
+                            if (xmlMsg.equals("")) {
+                                // You are the first player in the game, wait to find a game
+                                game.getPlayer().setPlayerNumber(1);
+
                                 Intent intent = new Intent();
-                                Game game = new Game(getApplicationContext());
-                                Bundle bundle = new Bundle();
-                                bundle.putSerializable(getString(R.string.game_state),game);
-                                intent.putExtras(bundle);
-                                intent.setClass(getApplicationContext(), RoundWaitActivity.class);
+                                intent.setClass(getApplicationContext(), WaitingRoomActivity.class);
+                                intent.putExtra(getString(R.string.game_state), game);
                                 startActivity(intent);
                             }
                             else {
-                                // You are the first player in the game, wait to find a game
+                                // Waiting for other player to make a move
+                                game.getPlayer().setPlayerNumber(2);
+
                                 Intent intent = new Intent();
-                                intent.setClass(getApplicationContext(), WaitingRoomActivity.class);
+                                intent.setClass(getApplicationContext(), RoundWaitActivity.class);
+                                intent.putExtra(getString(R.string.game_state), game);
                                 startActivity(intent);
                             }
                         }

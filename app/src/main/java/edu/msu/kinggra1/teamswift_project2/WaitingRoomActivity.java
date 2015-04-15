@@ -22,7 +22,7 @@ import java.io.InputStream;
 
 public class WaitingRoomActivity extends ActionBarActivity {
 
-    Cloud cloud;
+    Cloud cloud = new Cloud();
     SharedPreferences sharedPref;
 
     private static final String UTF8 = "UTF-8";
@@ -41,15 +41,27 @@ public class WaitingRoomActivity extends ActionBarActivity {
      */
     private boolean waitThreadRunnable = true;
 
+    /**
+     * Game instance for this player
+     */
+    private Game game;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
         setContentView(R.layout.activity_waiting_room);
-        Cloud cloud = new Cloud();
+
+        if (bundle != null) {
+            // Device was rotated
+            game = (Game)bundle.getSerializable(getString(R.string.game_state));
+        }
+        else {
+            // We are starting from a previous activity
+            game = (Game)getIntent().getExtras().getSerializable(getString(R.string.game_state));
+        }
+
         sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -75,13 +87,12 @@ public class WaitingRoomActivity extends ActionBarActivity {
     }
 
     public void logOut() {
-        Thread thread = new Thread(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 cloud.LogOut(sharedPref.getString("USERNAME","null"), sharedPref.getString("PASSWORD","null"));
             }
-        });
-        thread.start();
+        }).start();
 
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("PASSWORD", "null");
@@ -96,6 +107,8 @@ public class WaitingRoomActivity extends ActionBarActivity {
     @Override
     protected void onSaveInstanceState(Bundle bundle) {
         super.onSaveInstanceState(bundle);
+
+        bundle.putSerializable(getString(R.string.game_state), game);
 
         // Stop the current wait thread
         waitThreadRunnable = false;
@@ -123,7 +136,7 @@ public class WaitingRoomActivity extends ActionBarActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Cloud cloud = new Cloud();
+                cloud = new Cloud();
 
                 InputStream stream;
 
@@ -151,6 +164,7 @@ public class WaitingRoomActivity extends ActionBarActivity {
                                 // Start the selection activity
                                 Intent intent = new Intent();
                                 intent.setClass(getApplicationContext(), SelectionActivity.class);
+                                intent.putExtra(getString(R.string.game_state), game);
                                 startActivity(intent);
                             }
                             else if (xmlStatus.equals("no")) {
