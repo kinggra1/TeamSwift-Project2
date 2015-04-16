@@ -171,6 +171,7 @@ public class Game implements Serializable {
     public void setPlayerSelection(Bird selection) {
         Bird copyOfSelected = new Bird(selection);
         player.setSelectedBird(copyOfSelected);
+        dragging = copyOfSelected;
     }
 
     /**

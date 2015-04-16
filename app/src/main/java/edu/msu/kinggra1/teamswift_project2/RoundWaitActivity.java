@@ -165,6 +165,7 @@ public class RoundWaitActivity extends ActionBarActivity {
 
                                 // Load the XML into the bird array
                                 game.LoadXML(xmlMsg, view);
+                                Log.e("LOAD_XML", xmlMsg);
 
                                 pullThreadRunnable = false;
 
@@ -178,13 +179,14 @@ public class RoundWaitActivity extends ActionBarActivity {
                                     startActivity(intent);
                                     finish();
                                 }
-
-                                // Start the Selection Activity
-                                Intent intent = new Intent();
-                                intent.setClass(getApplicationContext(), SelectionActivity.class);
-                                intent.putExtra(getString(R.string.game_state), game);
-                                startActivity(intent);
-                                finish();
+                                else {
+                                    // Start the Selection Activity
+                                    Intent intent = new Intent();
+                                    intent.setClass(getApplicationContext(), SelectionActivity.class);
+                                    intent.putExtra(getString(R.string.game_state), game);
+                                    startActivity(intent);
+                                    finish();
+                                }
                             } else if (xmlStatus.equals("no") && !xmlMsg.equals("")) {
                                 ToastMessage(xmlMsg);
                             }
