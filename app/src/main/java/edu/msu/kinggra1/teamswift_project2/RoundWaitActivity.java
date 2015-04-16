@@ -166,12 +166,18 @@ public class RoundWaitActivity extends ActionBarActivity {
                                 // Load the XML into the bird array
                                 game.LoadXML(xmlMsg, view);
 
+                                pullThreadRunnable = false;
+
                                 // The other player lost the game
                                 if (game.inGameOverState()) {
-
+                                    // This player has won
+                                    game.setWinner(true);
+                                    Intent intent = new Intent();
+                                    intent.setClass(getApplicationContext(), FinalScoreActivity.class);
+                                    intent.putExtra(getString(R.string.game_state), game);
+                                    startActivity(intent);
+                                    finish();
                                 }
-
-                                pullThreadRunnable = false;
 
                                 // Start the Selection Activity
                                 Intent intent = new Intent();
