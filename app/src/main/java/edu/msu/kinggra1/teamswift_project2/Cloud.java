@@ -10,8 +10,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.CookieHandler;
-import java.net.CookieManager;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -182,9 +180,6 @@ public class Cloud {
      */
     public InputStream SendXML(String xmlStr, String urlStr)
     {
-        CookieManager cookieManager = new CookieManager();
-        CookieHandler.setDefault(cookieManager);
-
         //Convert the XML into HTTP POST data
         String postDataStr;
 

@@ -17,6 +17,8 @@ import android.widget.Toast;
 import org.xmlpull.v1.XmlPullParser;
 
 import java.io.InputStream;
+import java.net.CookieHandler;
+import java.net.CookieManager;
 
 
 public class LoginActivity extends ActionBarActivity {
@@ -48,6 +50,10 @@ public class LoginActivity extends ActionBarActivity {
             userText.setText(sharedPref.getString("USERNAME","null"));
             userPasssword.setText(sharedPref.getString("PASSWORD","null"));
         }
+
+        // Login successful
+        CookieManager cookieManager = new CookieManager();
+        CookieHandler.setDefault(cookieManager);
     }
 
 
@@ -162,7 +168,6 @@ public class LoginActivity extends ActionBarActivity {
                             ToastMessage(xmlMsg);
                         }
                         else if (xmlStatus.equals("yes")) {
-                            // Login successful
 
                             if(check.isChecked()) {
                                 SharedPreferences.Editor editor = sharedPref.edit();
