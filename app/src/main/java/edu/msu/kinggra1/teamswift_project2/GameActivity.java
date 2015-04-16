@@ -141,6 +141,9 @@ public class GameActivity extends ActionBarActivity {
                         }
                         else if (xmlStatus.equals("yes")) {
                             // Push successful
+                            String id = xmlParser.getAttributeValue(null, "id");
+
+                            gameView.getGame().setCloudID(Integer.valueOf(id));
 
                             if (gameView.inGameOverState()) {
                                 // Start the final score activity with this
