@@ -98,6 +98,7 @@ public class RoundWaitActivity extends ActionBarActivity {
         Intent intent = new Intent();
         intent.setClass(getApplicationContext(), LoginActivity.class);
         startActivity(intent);
+        finish();
     }
 
     @Override
@@ -155,7 +156,8 @@ public class RoundWaitActivity extends ActionBarActivity {
                             if (!pullThreadRunnable)
                                 return;
 
-                            if (xmlStatus.equals("yes") && xmlMsg != null) {
+                            // If the status is yes and the message is not empty
+                            if (xmlStatus.equals("yes") && !xmlMsg.equals("")) {
                                 String newCloudID = xmlParser.getAttributeValue(null, "id");
 
                                 // Update cloud ID
@@ -176,8 +178,8 @@ public class RoundWaitActivity extends ActionBarActivity {
                                 intent.setClass(getApplicationContext(), SelectionActivity.class);
                                 intent.putExtra(getString(R.string.game_state), game);
                                 startActivity(intent);
-
-                            } else if (xmlStatus.equals("no") && xmlMsg != null) {
+                                finish();
+                            } else if (xmlStatus.equals("no") && !xmlMsg.equals("")) {
                                 ToastMessage(xmlMsg);
                             }
                         } catch (Exception ex) {

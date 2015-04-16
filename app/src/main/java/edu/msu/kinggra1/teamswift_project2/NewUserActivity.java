@@ -87,6 +87,7 @@ public class NewUserActivity extends ActionBarActivity {
                             Intent intent = new Intent();
                             intent.setClass(getApplicationContext(), LoginActivity.class);
                             startActivity(intent);
+                            finish();
                         }
                     }
                     catch (Exception ex) {
@@ -112,5 +113,6 @@ public class NewUserActivity extends ActionBarActivity {
     public void backLogin(View view) {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
+        finish();
     }
 }

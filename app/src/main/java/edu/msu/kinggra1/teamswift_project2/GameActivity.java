@@ -86,6 +86,7 @@ public class GameActivity extends ActionBarActivity {
                 intent.setClass(getApplicationContext(), SelectionActivity.class);
                 intent.putExtra(getString(R.string.game_state), gameView.getGame());
                 startActivity(intent);
+                finish();
             }
         }
     }

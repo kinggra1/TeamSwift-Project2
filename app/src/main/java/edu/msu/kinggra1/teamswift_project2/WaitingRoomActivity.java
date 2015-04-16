@@ -102,6 +102,7 @@ public class WaitingRoomActivity extends ActionBarActivity {
         Intent intent = new Intent();
         intent.setClass(getApplicationContext(), LoginActivity.class);
         startActivity(intent);
+        finish();
     }
 
     @Override
@@ -166,12 +167,13 @@ public class WaitingRoomActivity extends ActionBarActivity {
                                 intent.setClass(getApplicationContext(), SelectionActivity.class);
                                 intent.putExtra(getString(R.string.game_state), game);
                                 startActivity(intent);
+                                finish();
                             }
                             else if (xmlStatus.equals("no")) {
                                 // Check to see if there is a message included with the no
                                 String xmlMsg = xmlParser.getAttributeValue(null, "msg");
 
-                                if (xmlMsg != null)
+                                if (!xmlMsg.equals(""))
                                     ToastMessage(xmlMsg);
                             }
                         } catch (Exception ex) {

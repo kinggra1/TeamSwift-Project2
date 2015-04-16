@@ -91,11 +91,13 @@ public class LoginActivity extends ActionBarActivity {
         Intent intent = new Intent();
         intent.setClass(getApplicationContext(), LoginActivity.class);
         startActivity(intent);
+        finish();
     }
 
     public void newUser(View view) {
         Intent intent = new Intent(this, NewUserActivity.class);
         startActivity(intent);
+        finish();
     }
 
     public void userLogin(final View view) {
@@ -164,6 +166,7 @@ public class LoginActivity extends ActionBarActivity {
                                 intent.setClass(getApplicationContext(), WaitingRoomActivity.class);
                                 intent.putExtra(getString(R.string.game_state), game);
                                 startActivity(intent);
+                                finish();
                             }
                             else {
                                 // Waiting for other player to make a move
@@ -173,6 +176,7 @@ public class LoginActivity extends ActionBarActivity {
                                 intent.setClass(getApplicationContext(), RoundWaitActivity.class);
                                 intent.putExtra(getString(R.string.game_state), game);
                                 startActivity(intent);
+                                finish();
                             }
                         }
                     }
