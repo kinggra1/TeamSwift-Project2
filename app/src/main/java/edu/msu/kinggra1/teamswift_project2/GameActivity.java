@@ -18,6 +18,7 @@ public class GameActivity extends ActionBarActivity {
     private static final String UTF8 = "UTF-8";
     private static final String COMM_EXCEPTION = "An exception occurred while communicating with the server";
     private static final String PARSING_EXCEPTION = "An exception occurred while parsing the server's return";
+    private static final String TIME_OUT_EXCEPTION = "User timed out";
 
     private GameView gameView;
 
@@ -123,7 +124,17 @@ public class GameActivity extends ActionBarActivity {
                         if (xmlStatus.equals("no")) {
                             String xmlMsg = xmlParser.getAttributeValue(null, "msg");
 
-                            ToastMessage(xmlMsg);
+                            if (xmlMsg.equals("loggedout")) {
+                                ToastMessage(TIME_OUT_EXCEPTION);
+
+                                Intent intent = new Intent();
+                                intent.setClass(getApplicationContext(), LoginActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                            else {
+                                ToastMessage(xmlMsg);
+                            }
                         }
                         else if (xmlStatus.equals("yes")) {
                             // Push successful
