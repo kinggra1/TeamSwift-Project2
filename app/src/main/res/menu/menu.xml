@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="edu.msu.kinggra1.teamswift_project2.LoginActivity">
 
-    <item android:id="@+id/action_settings" android:title="Log Out"
+    <item android:id="@+id/logout" android:title="Log Out"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/logoutall" android:title="Log Out All"
         android:orderInCategory="100" app:showAsAction="never" />
 </menu>

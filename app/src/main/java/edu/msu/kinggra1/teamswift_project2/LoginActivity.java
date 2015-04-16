@@ -66,12 +66,32 @@ public class LoginActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            Log.d("CLICKED", "CLICKED");
+        if (id == R.id.logout) {
+            Log.d("CLICKED", "One");
             logOut();
         }
+        if (id == R.id.logoutall) {
+            Log.d("CLICKED", "All");
+            logOutAll();
+        }
+
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void logOutAll(){
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                cloud.LogOutAll();
+            }
+        });
+        thread.start();
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("PASSWORD", "null");
+        editor.putString("USERNAME", "null");
+        editor.commit();
     }
 
     public void logOut() {
