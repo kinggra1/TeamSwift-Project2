@@ -116,8 +116,8 @@ public class Bird implements Serializable {
         bird = BitmapFactory.decodeResource(context.getResources(), id);
         this.relX = relX;
         this.relY = relY;
-        this.x = x;
-        this.y = y;
+        this.x = -1;
+        this.y = -1;
 
         //bird.move()
         rect = new Rect();

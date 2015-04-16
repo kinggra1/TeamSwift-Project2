@@ -43,6 +43,9 @@ public class FinalScoreActivity extends ActionBarActivity {
 
         ((TextView)findViewById(R.id.winningPlayerText)).setText(winningPlayerText);
         ((TextView)findViewById(R.id.birdText)).setText(String.format(getString(R.string.birds_placed), game.getNumBirdsPlaced()));
+
+        logOutAll();
+
     }
 
     public void onNewGame(View view) {
@@ -98,5 +101,20 @@ public class FinalScoreActivity extends ActionBarActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         finish();
+    }
+
+    public void logOutAll(){
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                cloud.LogOutAll();
+            }
+        });
+        thread.start();
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("PASSWORD", "null");
+        editor.putString("USERNAME", "null");
+        editor.commit();
     }
 }

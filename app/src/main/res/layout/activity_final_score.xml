@@ -44,7 +44,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/new_game"
+            android:text="@string/Exit"
             android:id="@+id/newGame"
             android:onClick="onNewGame"
             android:textSize="24sp" />
