@@ -165,7 +165,7 @@ public class RoundWaitActivity extends ActionBarActivity {
 
                                 // Load the XML into the bird array
                                 game.LoadXML(xmlMsg, view);
-                                Log.e("LOAD_XML", xmlMsg);
+                                Log.e("Received XML", xmlMsg);
 
                                 pullThreadRunnable = false;
 

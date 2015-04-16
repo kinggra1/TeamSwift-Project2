@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Xml;
 import android.view.View;
 import android.widget.TextView;
@@ -107,6 +108,7 @@ public class GameActivity extends ActionBarActivity {
                 Cloud cloud = new Cloud();
 
                 String xmlStr = gameView.getGame().CreateXML();
+                Log.e("Sent XML", xmlStr);
 
                 InputStream stream = cloud.Push(xmlStr);
 
