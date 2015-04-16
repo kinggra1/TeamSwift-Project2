@@ -137,9 +137,6 @@ public class Cloud {
      */
     public InputStream Push(Game game)
     {
-        ArrayList<Pair<String, String>> attrList = new ArrayList<>();
-        attrList.add(new Pair<>("magic", MAGIC));
-
         String xmlStr = CreatePushXML(game);
 
         return SendXML(xmlStr, PUSH_URL);
