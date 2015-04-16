@@ -124,7 +124,7 @@ public class LoginActivity extends ActionBarActivity {
         userText = (EditText) findViewById(R.id.userText);
         userPasssword = (EditText) findViewById(R.id.userPassword);
 
-        if(sharedPref.getString("USERNAME","null").equals("null") && sharedPref.getString("PASSWORD","null").equals("null") ) {
+        if(!sharedPref.getString("USERNAME","null").equals("null") && !sharedPref.getString("PASSWORD","null").equals("null") ) {
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -132,6 +132,11 @@ public class LoginActivity extends ActionBarActivity {
                 }
             });
             thread.start();
+
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString("PASSWORD", "null");
+            editor.putString("USERNAME", "null");
+            editor.commit();
         }
 
         new Thread( new Runnable() {
