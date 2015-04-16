@@ -122,6 +122,9 @@ public class GameActivity extends ActionBarActivity {
                         String xmlStatus = xmlParser.getAttributeValue(null, "status");
 
                         if (xmlStatus.equals("no")) {
+                            // Push failed, remove the bird from the list
+                            gameView.getGame().removeAddedBird();
+
                             String xmlMsg = xmlParser.getAttributeValue(null, "msg");
 
                             if (xmlMsg.equals("loggedout")) {
@@ -158,9 +161,11 @@ public class GameActivity extends ActionBarActivity {
                             }
                         }
                     } catch (Exception ex) {
+                        gameView.getGame().removeAddedBird();
                         ToastMessage(PARSING_EXCEPTION);
                     }
                 } else {
+                    gameView.getGame().removeAddedBird();
                     ToastMessage(COMM_EXCEPTION);
                 }
             }

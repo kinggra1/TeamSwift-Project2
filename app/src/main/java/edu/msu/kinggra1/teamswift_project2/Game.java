@@ -196,6 +196,12 @@ public class Game implements Serializable {
     }
 
     /**
+     * Removes the recently added bird
+     * Used when the push fails
+     */
+    public void removeAddedBird() { birds.remove(player.getSelectedBird()); }
+
+    /**
      * Draw the game
      * @param canvas the canvas to draw on
      */
