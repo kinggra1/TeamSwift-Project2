@@ -121,9 +121,9 @@ public class LoginActivity extends ActionBarActivity {
     }
 
     public void newUser(View view) {
-        Intent intent = new Intent(this, NewUserActivity.class);
+        Intent intent = new Intent();
+        intent.setClass(getApplicationContext(), NewUserActivity.class);
         startActivity(intent);
-        finish();
     }
 
     public void userLogin(final View view) {
