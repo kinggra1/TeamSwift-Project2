@@ -31,10 +31,17 @@ public class Cloud {
     private static final String PUSH_URL = "http://webdev.cse.msu.edu/~kinggra1/cse476/Project2/push.php";
     private static final String PULL_URL = "http://webdev.cse.msu.edu/~kinggra1/cse476/Project2/pull.php";
     private static final String WAIT_URL = "http://webdev.cse.msu.edu/~kinggra1/cse476/Project2/findgame.php";
-
+    private static final String LOGOUTALL_URL = "http://webdev.cse.msu.edu/~kinggra1/cse476/Project2/logoutall.php";
 
     private static final String UTF8 = "UTF-8";
 
+    /**
+     * Register a new user on the server
+     * @param username User
+     * @param password Password
+     * @param confirmPassword Password check
+     * @return The server's response
+     */
     public InputStream Register(String username, String password, String confirmPassword)
     {
         // Trim leading white spaces on user and pass
@@ -57,16 +64,35 @@ public class Cloud {
         return SendXML("flock", attrList, REGISTER_URL);
     }
 
+    /**
+     * Log in to the server
+     * @param username User
+     * @param password Password
+     * @return The server's response
+     */
     public InputStream LogIn(String username, String password)
     {
         return LogInOrOut(username, password, LOGIN_URL);
     }
 
+    /**
+     * Log out of the server
+     * @param username User
+     * @param password Password
+     * @return The server's response
+     */
     public InputStream LogOut(String username, String password)
     {
         return LogInOrOut(username, password, LOGOUT_URL);
     }
 
+    /**
+     * Log in or out of the server
+     * @param username User
+     * @param password Password
+     * @param url LOGIN or LOGOUT URL
+     * @return The server's response
+     */
     public InputStream LogInOrOut(String username, String password, String url)
     {
         // Trim leading white spaces on user and pass
@@ -87,6 +113,11 @@ public class Cloud {
         return SendXML("flock", attrList, url);
     }
 
+    /**
+     * Pull the latest Game version from the server
+     * @param id The current id this instance of the game is using
+     * @return The server's response
+     */
     public InputStream Pull(int id)
     {
         ArrayList<Pair<String, String>> attrList = new ArrayList<>();
@@ -96,6 +127,11 @@ public class Cloud {
         return SendXML("flock", attrList, PULL_URL);
     }
 
+    /**
+     * Push the XML to the server
+     * @param xmlStr Game XML data
+     * @return The server's response
+     */
     public InputStream Push(String xmlStr)
     {
         ArrayList<Pair<String, String>> attrList = new ArrayList<>();
@@ -105,12 +141,27 @@ public class Cloud {
         return SendXML("flock", attrList, PUSH_URL);
     }
 
+    /**
+     * Wait for the server to find a game
+     * @return The server's response
+     */
     public InputStream Wait() {
 
         ArrayList<Pair<String, String>> attrList = new ArrayList<>();
         attrList.add(new Pair<>("magic", MAGIC));
 
         return SendXML("flock", attrList, WAIT_URL);
+    }
+
+    /**
+     * Used for debugging purposes only - Log out all users on the server
+     * @return The server's response
+     */
+    public InputStream LogOutAll() {
+        ArrayList<Pair<String, String>> attrList = new ArrayList<>();
+        attrList.add(new Pair<>("magic", MAGIC));
+
+        return SendXML("flock", attrList, LOGOUTALL_URL);
     }
 
     /**
