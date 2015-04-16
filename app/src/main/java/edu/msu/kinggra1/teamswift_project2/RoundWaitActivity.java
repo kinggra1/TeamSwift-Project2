@@ -146,26 +146,27 @@ public class RoundWaitActivity extends ActionBarActivity {
                             XmlPullParser xmlParser = Xml.newPullParser();
                             xmlParser.setInput(stream, UTF8);
 
-                            xmlParser.nextTag();      // Advance to first tag
+                            xmlParser.nextTag();      // Advance to flock tag
                             xmlParser.require(XmlPullParser.START_TAG, null, "flock");
 
                             String xmlStatus = xmlParser.getAttributeValue(null, "status");
-                            String xmlMsg = xmlParser.getAttributeValue(null, "msg");
 
                             // Check if this thread should be running
                             if (!pullThreadRunnable)
                                 return;
 
                             // If the status is yes and the message is not empty
-                            if (xmlStatus.equals("yes") && !xmlMsg.equals("")) {
+                            if (xmlStatus.equals("yes")) {
                                 String newCloudID = xmlParser.getAttributeValue(null, "id");
 
                                 // Update cloud ID
                                 game.setCloudID(Integer.parseInt(newCloudID));
 
+                                // Advance to game info
+                                xmlParser.nextTag();
+
                                 // Load the XML into the bird array
-                                game.LoadXML(xmlMsg, view);
-                                Log.e("Received XML", xmlMsg);
+                                game.LoadXML(xmlParser, view);
 
                                 pullThreadRunnable = false;
 
@@ -187,7 +188,9 @@ public class RoundWaitActivity extends ActionBarActivity {
                                     startActivity(intent);
                                     finish();
                                 }
-                            } else if (xmlStatus.equals("no") && !xmlMsg.equals("")) {
+                            } else if (xmlStatus.equals("no")) {
+                                String xmlMsg = xmlParser.getAttributeValue(null, "msg");
+
                                 ToastMessage(xmlMsg);
                             }
                         } catch (Exception ex) {

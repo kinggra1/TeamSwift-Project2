@@ -107,10 +107,7 @@ public class GameActivity extends ActionBarActivity {
                 // Get a new cloud instance
                 Cloud cloud = new Cloud();
 
-                String xmlStr = gameView.getGame().CreateXML();
-                Log.e("Sent XML", xmlStr);
-
-                InputStream stream = cloud.Push(xmlStr);
+                InputStream stream = cloud.Push(gameView.getGame());
 
                 if (stream != null) {
                     try {

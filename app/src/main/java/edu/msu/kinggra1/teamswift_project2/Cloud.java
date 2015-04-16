@@ -61,7 +61,9 @@ public class Cloud {
         attrList.add(new Pair<>("repass", confirmPassword));
         attrList.add(new Pair<>("magic", MAGIC));
 
-        return SendXML("flock", attrList, REGISTER_URL);
+        String xmlStr = CreateDefaultXML(attrList);
+
+        return SendXML(xmlStr, REGISTER_URL);
     }
 
     /**
@@ -110,7 +112,9 @@ public class Cloud {
         attrList.add(new Pair<>("pass", password));
         attrList.add(new Pair<>("magic", MAGIC));
 
-        return SendXML("flock", attrList, url);
+        String xmlStr = CreateDefaultXML(attrList);
+
+        return SendXML(xmlStr, url);
     }
 
     /**
@@ -124,21 +128,23 @@ public class Cloud {
         attrList.add(new Pair<>("magic", MAGIC));
         attrList.add(new Pair<>("id", String.valueOf(id)));
 
-        return SendXML("flock", attrList, PULL_URL);
+        String xmlStr = CreateDefaultXML(attrList);
+
+        return SendXML(xmlStr, PULL_URL);
     }
 
     /**
-     * Push the XML to the server
-     * @param xmlStr Game XML data
+     * Push the game XML to the server
      * @return The server's response
      */
-    public InputStream Push(String xmlStr)
+    public InputStream Push(Game game)
     {
         ArrayList<Pair<String, String>> attrList = new ArrayList<>();
         attrList.add(new Pair<>("magic", MAGIC));
-        attrList.add(new Pair<>("birds", xmlStr));
 
-        return SendXML("flock", attrList, PUSH_URL);
+        String xmlStr = CreatePushXML(game);
+
+        return SendXML(xmlStr, PUSH_URL);
     }
 
     /**
@@ -150,7 +156,9 @@ public class Cloud {
         ArrayList<Pair<String, String>> attrList = new ArrayList<>();
         attrList.add(new Pair<>("magic", MAGIC));
 
-        return SendXML("flock", attrList, WAIT_URL);
+        String xmlStr = CreateDefaultXML(attrList);
+
+        return SendXML(xmlStr, WAIT_URL);
     }
 
     /**
@@ -161,52 +169,21 @@ public class Cloud {
         ArrayList<Pair<String, String>> attrList = new ArrayList<>();
         attrList.add(new Pair<>("magic", MAGIC));
 
-        return SendXML("flock", attrList, LOGOUTALL_URL);
+        String xmlStr = CreateDefaultXML(attrList);
+
+        return SendXML(xmlStr, LOGOUTALL_URL);
     }
 
     /**
      * Sends xml to the given url and returns the msg data if the operation failed
-     * @param tag start and end tag of the xml
-     * @param attrList list of attributes to add
+     * @param xmlStr String of XML to send
      * @param urlStr URL to use to send the data
      * @return If successful, null. If failed, returns the msg data
      */
-    public InputStream SendXML(String tag, List<Pair<String, String>> attrList, String urlStr)
+    public InputStream SendXML(String xmlStr, String urlStr)
     {
-
         CookieManager cookieManager = new CookieManager();
         CookieHandler.setDefault(cookieManager);
-
-        // Serializer used to create XML, stringwriter used to capture xml output
-        XmlSerializer xmlSerializer = Xml.newSerializer();
-        StringWriter writer = new StringWriter();
-
-        // Create an XML packet
-        try
-        {
-            xmlSerializer.setOutput(writer);
-
-            xmlSerializer.startDocument(UTF8, true);
-
-            xmlSerializer.startTag(null, tag);
-
-            for (Pair<String, String> pair : attrList)
-            {
-                xmlSerializer.attribute(null, pair.first, pair.second);
-            }
-
-            xmlSerializer.endTag(null, tag);
-
-            xmlSerializer.endDocument();
-        }
-        catch (IOException e)
-        {
-            // This won't occur when writing to a string
-            return null;
-        }
-
-        // Convert string writer to string
-        final String xmlStr = writer.toString();
 
         //Convert the XML into HTTP POST data
         String postDataStr;
@@ -259,5 +236,72 @@ public class Cloud {
         }
 
         return inputStream;
+    }
+
+    public String CreateDefaultXML(List<Pair<String, String>> attrList) {
+        // Serializer used to create XML, stringwriter used to capture xml output
+        XmlSerializer xmlSerializer = Xml.newSerializer();
+        StringWriter writer = new StringWriter();
+
+        // Create an XML packet
+        try
+        {
+            xmlSerializer.setOutput(writer);
+
+            xmlSerializer.startDocument(UTF8, true);
+
+            xmlSerializer.startTag(null, "flock");
+
+            for (Pair<String, String> pair : attrList)
+            {
+                xmlSerializer.attribute(null, pair.first, pair.second);
+            }
+
+            xmlSerializer.endTag(null, "flock");
+
+            xmlSerializer.endDocument();
+        }
+        catch (IOException e)
+        {
+            // This won't occur when writing to a string
+            return null;
+        }
+
+        // Convert string writer to string
+        return writer.toString();
+    }
+
+    public String CreatePushXML(Game game) {
+        // Serializer used to create XML, stringwriter used to capture xml output
+        XmlSerializer xmlSerializer = Xml.newSerializer();
+        StringWriter writer = new StringWriter();
+
+        // Create an XML packet
+        try
+        {
+            xmlSerializer.setOutput(writer);
+
+            xmlSerializer.startDocument(UTF8, true);
+
+            xmlSerializer.startTag(null, "flock");
+
+            xmlSerializer.attribute(null, "id", String.valueOf(game.getCloudID()));
+
+            xmlSerializer.attribute(null, "magic", MAGIC);
+
+            game.CreateXML(xmlSerializer);
+
+            xmlSerializer.endTag(null, "flock");
+
+            xmlSerializer.endDocument();
+        }
+        catch (IOException e)
+        {
+            // This won't occur when writing to a string
+            return null;
+        }
+
+        // Convert string writer to string
+        return writer.toString();
     }
 }

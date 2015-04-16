@@ -288,7 +288,7 @@ public class Game implements Serializable {
         return false;
     }
 
-    public void LoadXML(String xmlStr, View view) {
+    public void LoadXML(XmlPullParser xmlParser, View view) {
         ArrayList<Bird> tempList = new ArrayList<>();
 
         float x;
@@ -298,12 +298,6 @@ public class Game implements Serializable {
         int id;
 
         try {
-            XmlPullParser xmlParser = Xml.newPullParser();
-            xmlParser.setInput(new StringReader(xmlStr));
-
-            // Advance to first tag
-            xmlParser.nextTag();
-
             // Get the context of the view for the Bird constructor
             Context context = view.getContext();
 
@@ -329,6 +323,11 @@ public class Game implements Serializable {
 
                 // Advance to next tag
                 xmlParser.nextTag();
+
+                // If we've found the flock end tag, stop the loop
+                if (xmlParser.getName().equals("flock") && (xmlParser.getEventType() == XmlPullParser.END_TAG)) {
+                    break;
+                }
             }
         } catch (Exception ex) {
             Log.e("EXCEPTION", "Exception Game.LoadXML");
@@ -338,19 +337,11 @@ public class Game implements Serializable {
         birds = tempList;
     }
 
-    public String CreateXML() {
-
-        // Serializer used to create XML, string writer used to capture xml output
-        XmlSerializer xmlSerializer = Xml.newSerializer();
-        StringWriter writer = new StringWriter();
+    public void CreateXML(XmlSerializer xmlSerializer) {
 
         // Create an XML packet
         try
         {
-            xmlSerializer.setOutput(writer);
-
-            xmlSerializer.startDocument(UTF8, true);
-
             for (Bird bird : birds) {
                 xmlSerializer.startTag(null, "bird");
 
@@ -369,17 +360,12 @@ public class Game implements Serializable {
             xmlSerializer.attribute(null, "gameOver", String.valueOf(gameOver));
 
             xmlSerializer.endTag(null, "game");
-
-            xmlSerializer.endDocument();
         }
         catch (IOException e)
         {
             // This won't occur when writing to a string
-            return null;
+            Log.e("CREATE XML", "Error creating XML");
         }
-
-        // Convert string writer to string
-        return writer.toString();
     }
 
     public void saveInstanceState(Bundle bundle, Context context) {
