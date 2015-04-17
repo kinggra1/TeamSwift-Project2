@@ -44,12 +44,10 @@ public class FinalScoreActivity extends ActionBarActivity {
         ((TextView)findViewById(R.id.winningPlayerText)).setText(winningPlayerText);
         ((TextView)findViewById(R.id.birdText)).setText(String.format(getString(R.string.birds_placed), game.getNumBirdsPlaced()));
 
-        logOutAll();
-
     }
 
     public void onNewGame(View view) {
-        logOut();
+        logOutAll();
     }
 
     @Override

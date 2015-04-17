@@ -200,7 +200,7 @@ public class RoundWaitActivity extends ActionBarActivity {
                                     startActivity(intent);
                                     finish();
                                 }
-                                else {
+                                else if(!xmlMsg.equals("")) {
                                     ToastMessage(xmlMsg);
                                 }
                             }
