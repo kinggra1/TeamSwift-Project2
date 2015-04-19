@@ -297,8 +297,6 @@ public class Game implements Serializable {
     public void LoadXML(XmlPullParser xmlParser, View view) {
         ArrayList<Bird> tempList = new ArrayList<>();
 
-        float x;
-        float y;
         float relX;
         float relY;
         int id;
@@ -313,14 +311,12 @@ public class Game implements Serializable {
                     xmlParser.nextTag();
 
                 if (xmlParser.getName().equals("bird")) {
-                    x = Float.parseFloat(xmlParser.getAttributeValue(null, "x"));
-                    y = Float.parseFloat(xmlParser.getAttributeValue(null, "y"));
                     relX = Float.parseFloat(xmlParser.getAttributeValue(null, "relX"));
                     relY = Float.parseFloat(xmlParser.getAttributeValue(null, "relY"));
                     id = Integer.parseInt(xmlParser.getAttributeValue(null, "id"));
 
                     // Add to temp list
-                    tempList.add(new Bird(context, id, relX, relY, x, y));
+                    tempList.add(new Bird(context, id, relX, relY));
                 }
                 else if (xmlParser.getName().equals("game")) {
                     gameOver = xmlParser.getAttributeValue(null, "gameOver").equals("true");
@@ -354,8 +350,6 @@ public class Game implements Serializable {
                 xmlSerializer.attribute(null, "id", String.valueOf(bird.getId()));
                 xmlSerializer.attribute(null, "relX", String.valueOf(bird.getRelX()));
                 xmlSerializer.attribute(null, "relY", String.valueOf(bird.getRelY()));
-                xmlSerializer.attribute(null, "x", String.valueOf(bird.getX()));
-                xmlSerializer.attribute(null, "y", String.valueOf(bird.getY()));
 
                 xmlSerializer.endTag(null, "bird");
             }
