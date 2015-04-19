@@ -47,7 +47,7 @@ public class FinalScoreActivity extends ActionBarActivity {
     }
 
     public void onNewGame(View view) {
-        logOutAll();
+        logOut();
     }
 
     @Override
