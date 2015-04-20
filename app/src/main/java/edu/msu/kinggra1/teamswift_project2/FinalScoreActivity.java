@@ -47,7 +47,7 @@ public class FinalScoreActivity extends ActionBarActivity {
     }
 
     public void onNewGame(View view) {
-        logOut();
+        logOutAll();
     }
 
     @Override
@@ -114,5 +114,13 @@ public class FinalScoreActivity extends ActionBarActivity {
         editor.putString("PASSWORD", "null");
         editor.putString("USERNAME", "null");
         editor.commit();
+
+        Intent intent = new Intent();
+        intent.setClass(getApplicationContext(), LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
     }
+
+
 }
