@@ -138,9 +138,6 @@ public class Bird implements Serializable {
         x += dx;
         y += dy;
 
-        relX = x / (gameSize - bird.getWidth());
-        relY = y / (gameSize - bird.getHeight());
-
         if (x < 0)
             x = 0;
         else if (x + width > gameSize)
@@ -150,6 +147,9 @@ public class Bird implements Serializable {
             y = 0;
         else if (y + height > gameSize)
             y = gameSize - height;
+
+        relX = x / (gameSize - bird.getWidth());
+        relY = y / (gameSize - bird.getHeight());
 
         setRect();
     }
